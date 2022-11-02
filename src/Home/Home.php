@@ -19,7 +19,7 @@ class Home implements Routable
             'currentRoute' => Store::dynamic('currentRoute'),
             'year' => date('Y'),
             'delivered' => Store::dynamic('delivered'),
-
+            'bar-color' => 'border-secondary'
         ]);
         return ['name' => 'Welcome'];
     }

@@ -1,1 +1,222 @@
-<section>{{name}}</section>
+<section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
+    <h1>Routing</h1>
+    <p>Routing of endpoints can be handled by attribute or declaration. This page will explain both.</p>
+    <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
+        <a href="/docs/routing#class" class="button-primary">The Neoan\Routing\Route class</a>
+        <a href="/docs/routing#chaining" class="button-primary">Middleware Chaining</a>
+        <a href="/docs/routing#parameter" class="button-primary">Route Parameters</a>
+        <a href="/docs/routing#inject" class="button-primary">Direct Injections</a>
+        <a href="/docs/routing#response" class="button-primary">Custom Response Handling</a>
+        <a href="/docs/routing#attribute" class="button-primary">Attribute Routing</a>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="class">The Neoan\Routing\Route class</h2>
+        <p>
+            Like most core-classes, <em>Route</em> is used statically
+            while maintaining a single instance of itself. It's responsible for registering routes.
+        </p>
+        <h3>Main methods</h3>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <p>Route::get</p>
+            <p class="span-x-2">Registers a GET request</p>
+            <p>Route::post</p>
+            <p class="span-x-2">Registers a POST request</p>
+            <p>Route::put</p>
+            <p class="span-x-2">Registers a PUT request</p>
+            <p>Route::patch</p>
+            <p class="span-x-2">Registers a PATCH request</p>
+            <p>Route::delete</p>
+            <p class="span-x-2">Registers a DELETE request</p>
+            <p>Route::request</p>
+            <p class="span-x-2">Registers other/custom requests</p>
+        </div>
+        <p>
+            With the exception of <em>Route::request</em>, these methods all take the same arguments.
+            LENKRAD intends to work with your IDE and tries to reduce string usage by the user. For these methods, this
+            means that classnames are provided to a route. A class must fulfill the following requirements: 
+        </p>
+        <ul>
+            <li>Implements Neoan\Routing\Interfaces\Routable</li>
+            <li>Has __invoke method</li>
+            <li>Returns a serializable result, a <a href="/docs/models">Model, a Collection</a> or a DataNormalization instance</li>
+        </ul>
+        <h3>Example or a routable class</h3>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+            namespace App;
+
+            use Neoan\Routing\Interfaces\Routable;
+
+            class Controller implements Routable
+            {
+                public function __invoke(): array
+                {
+                    return ['test' => 'message'];
+                }
+            }
+        </code></pre>
+        <h3>Example of a route using <em>Controller.php</em></h3>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App;
+
+            use Neoan\Routing\Route;
+
+            Route::get('/test', Controller::class);
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="chaining">Middleware Chaining</h2>
+        <p>A route definition can chain routable classes as needed:</p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App;
+
+            use Neoan\Routing\Route;
+
+            Route::get('/test', Auth::class, ReadUserFile::class, Controller::class);
+        </code></pre>
+        <p>This will execute one class after another. For a better understanding on how to utilize this feature,
+        please refer to the <a href="/docs/middleware">Middleware chapter</a> of this documentation</p>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="parameter">Route parameter</h2>
+        <p>
+            In both API & SSR routes, variable parameters are a common necessity.
+            Like many other frameworks in various languages, LENKRAD solves this by markup:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App;
+
+            use Neoan\Routing\Route;
+
+            // Route will respond to /test/{anything}
+            Route::get('/test/:name', Controller::class);
+
+            // Route will respond to /test and /test/{anything}
+            Route::get('/test/:name*', Controller::class);
+
+            // Multiple parameters are possible
+            Route::get('/test/:name/:id*', Controller::class);
+        </code></pre>
+        <h3>Variable usage</h3>
+        <p>
+            Routes using parameters provide their content to <a href="/docs/request">Request</a>.
+            To indicate a part of the route as parameter, prefix it with <em>: (colon)</em>.
+            To indicate a part of the route is an optional parameter, additionally append it with <em>* (asterisks)</em>
+        </p>
+        <blockquote>
+            Careful when chaining parameters. It's a common trap to pollute namespaces.
+        </blockquote>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="inject">Direct Injection</h2>
+        <p>
+            In very simple projects or routes, the necessity for logic might be overkill.
+            You can therefore directly pass values to the response instead of using a class.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App;
+
+            use Neoan\Routing\Route;
+            use Neoan\Request\Request;
+
+            Route::get('/test/:name')
+                ->inject(Request::getParameters());
+        </code></pre>
+        <blockquote>
+            Note that without additional changes to defaults, this only works for the
+            standard JSON response.
+        </blockquote>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="response">Custom response handling</h2>
+        <p>
+            We speak of an either/or when talking about responses.
+            However, in reality you might have different response requirements for a particular route.
+            This is why it's possible to overwrite the default behavior per route.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App;
+
+            use Neoan\Routing\Route;
+            use Neoan\Response\Response;
+
+
+            // using the default response handler, but overwriting its current default handling
+            Route::get('/test', Controller::class)
+                ->view('templates/test.html')
+                ->response([Response::class,'html']);
+
+            // using your own response handler and its method "answer"
+            Route::get('/test', Controller::class)
+                ->response([MyResponseHandler::class,'answer']);
+        </code></pre>
+        Response handling is further explained in <a href="/docs/response">Response</a>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="attribute">Attribute Routing</h2>
+        <p>
+            Ever since Ruby on Rails exploded onto the world, annotational routing took the developer's interest.
+            In LENKRAD, you can achieve this with attributes on the class-level.
+        </p>
+        <h3>Setup</h3>
+        <p>
+            In order to make use of this convenient way of defining routes,
+            add the following lines to your index.php in your public folder:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+            $app = new NeoanApp( $appPath, $publicPath, $cliPath);
+
+            // enable attribute routing
+            $namespaceToExploreRecursively = 'App';
+
+            $app->invoke(new Neoan\Routing\AttributeRouting($namespaceToExploreRecursively));
+
+            $app->run();
+        </code></pre>
+        <h3>Examples</h3>
+        <div class="grid grid-cols-6 gap-3">
+            <div class="border-b-2 border-primary font-lg">Attribute</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <div class="border-b-2 border-primary font-lg span-x-3">Example</div>
+            <p>Web</p>
+            <p class="span-x-2">Resolves html routes</p>
+            <p class="span-x-3">#[Web('/test', 'test.html')]</p>
+            <p>Get</p>
+            <p class="span-x-2">Resolves API-GET routes</p>
+            <p class="span-x-3">#[Get('/api/test')]</p>
+            <p>Post</p>
+            <p class="span-x-2">Resolves API-GET routes</p>
+            <p class="span-x-3">#[Post('/api/test', AuthGuard::class)]</p>
+            <p>Put</p>
+            <p class="span-x-2">Resolves API-PUT routes</p>
+            <p class="span-x-3">#[Put('/api/test', AuthGuard::class)]</p>
+        </div>
+        <p>
+            Generally, the behavior is identical to declaring routes manually.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+            namespace App;
+
+            // Don't forget the use-statement!
+            use Neoan\Routing\Attributes\Get;
+
+            use Neoan\Routing\Interfaces\Routable;
+
+            #[Get('/api/test')]
+            class Controller implements Routable
+            {
+                public function __invoke(): array
+                {
+                    return ['test' => 'message'];
+                }
+            }
+
+        </code></pre>
+
+    </div>
+
+</section>

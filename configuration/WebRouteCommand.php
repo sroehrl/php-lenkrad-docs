@@ -41,6 +41,7 @@ class WebRouteCommand extends Command
 
         $nameParts = explode('\\', $input->getArgument('name'));
 
+
         file_put_contents($this->neoanApp->appPath . '/views/docs/' . strtolower(end($nameParts)) . '.html', $viewTemplate);
 
 

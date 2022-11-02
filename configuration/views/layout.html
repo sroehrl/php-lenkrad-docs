@@ -19,14 +19,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-neutral-dark flex" style="flex-direction: column; min-height: 100vh">
-<header class="text-white p-4 border-t-5 border-accent" style="background: rgb(73, 77, 85);">
+<header class="text-white p-4 border-t-5 border-secondary" style="background: rgb(73, 77, 85);">
     <a class="font-xl text-center block" href="/">
-        LENKRAD - The modern PHP framework
+        LENKRAD - The modern PHP core
     </a>
     <div class="text-center">{{name}}</div>
 </header>
 <div class="flex flex-1">
-    <div class="bg-neutral border-r-3 border-accent" style="min-width: 230px" x-data="{isCurrent: (route) => route === '{{currentRoute}}'}">
+    <div class="bg-neutral border-r-3 border-secondary" style="min-width: 230px" x-data="{isCurrent: (route) => route === '{{currentRoute}}'}">
         <div class="font-lg p-3 bg-neutral-light">Basics</div>
         <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs') }">
             <a href="/docs">Getting Started</a>
@@ -59,12 +59,24 @@
         <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs/dynamic-store') }">
             <a href="/docs/dynamic-store">Dynamic Store</a>
         </div>
+        <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs/cli') }">
+            <a href="/docs/cli">CLI tool</a>
+        </div>
         <div class="font-lg p-3 bg-neutral-light mt-3">Deployment</div>
-        <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs/dynamic-store') }">
+        <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs/deploy') }">
             <a href="/docs/deploy">Deploy your app</a>
         </div>
     </div>
-    <main class="flex-1 p-5">{{main}}</main>
+    <main class="flex-1 p-5">
+        <div>{{main}}</div>
+        <h2>Before you move on</h2>
+        <blockquote>
+            Many references on this page assume default settings. Your project might differ in behavior, paths etc.
+        </blockquote>
+        <div class="scroll-spy fixed bottom-17 right-3">
+            <button class="button-neutral-light cursor-pointer shadow-neutral" style="width: 50px; height: 50px; border-radius: 50%" onclick="backToTop()">GO UP</button>
+        </div>
+    </main>
 
 </div>
 <footer class="mt-5 bg-neutral border-secondary-light border-t-2 p-4">

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\QuickStart;
+namespace App\StarterProjects;
 
 use Neoan\NeoanApp;
 use Neoan\Render\Renderer;
-use Neoan\Routing\Interfaces\Routable;
 use Neoan\Routing\Attributes\Web;
+use Neoan\Routing\Interfaces\Routable;
 use Neoan\Store\Store;
 
-#[Web('/quick-start', '/quickstart.html')]
-class QuickStart implements Routable
+#[Web('/starter-projects', '/starter-projects.html')]
+class StarterProjects implements Routable
 {
     public function __invoke(NeoanApp $app): array
     {
@@ -19,8 +19,9 @@ class QuickStart implements Routable
             'currentRoute' => Store::dynamic('currentRoute'),
             'year' => date('Y'),
             'delivered' => Store::dynamic('delivered'),
-            'bar-color' => 'border-primary'
+            'name' => 'Starter Projects',
+            'bar-color' => 'border-accent'
         ]);
-        return ['name' => 'Quick Start'];
+        return [];
     }
 }
