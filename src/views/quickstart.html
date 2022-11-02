@@ -1,0 +1,103 @@
+<section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
+
+    <blockquote>
+        <h2 class="mb-1 mt-0">Simple.</h2>
+        <h2 class="mb-1 mt-0">Lightning fast.</h2>
+        <h2 class="mb-1 mt-0">A joy to develop with.</h2>
+    </blockquote>
+
+    <div class="grid grid-cols-4 mt-14 gap-x-2 mb-8">
+        <div class="span-x-3">
+            <h3>1. Install via composer</h3>
+            <code>composer require neoan.io/core</code>
+            <h3>2. Create a source folder and a web folder</h3>
+            <code>mkdir src</code> <br>
+            <code>mkdir public</code> <em class="font-md">(or however appropriate with your system)</em>
+            <h3>3. Prepare composer.json to autoload files</h3>
+            <pre class="normalize-code"><code class="language-php">
+                ...
+                "autoload": {
+                    "psr-4": {
+                      "App\\": "./src/",
+                    }
+                ...
+            </code></pre>
+            <h3>4. Make composer understand</h3>
+            <code>composer dumpautoload</code>
+            <h3>5. Set up your app</h3>
+            <p>Your index.php should run in the root of the intended web-entry (usually /public)</p>
+            <pre class="normalize-code"><code class="language-php">
+                // /public/index.php
+
+                use Neoan\NeoanApp;
+                use Neoan\Routing\Route;
+
+                $projectPath = dirname(__DIR__);
+                require_once $projectPath . '/vendor/autoload.php';
+
+                $pathToSourceFiles = $projectPath . '/src';
+                $publicPath = __DIR__;
+
+                $app = new NeoanApp($pathToSourceFiles, $publicPath);
+
+                // register a test route
+                Route::get('/')->inject([
+                        'msg' => 'Neoan LENKRAD is running'
+                    ]);
+
+                // run application
+                $app->run();
+            </code></pre>
+            <h3>6. Test your app</h3>
+            <code>cd public</code> <br>
+            <code>php -S localhost:8000 index.php</code>
+            <h2>That's it for the app itself.</h2>
+            <p>
+                However, let's set up the CLI application as well.
+                The cli tool helps you with common tasks like migrating models or generating files.
+            </p>
+            <h3>1. Create a file <em>cli</em> in your project's root directory</h3>
+            <code>touch cli</code> <em class="font-md">(or however appropriate with your system)</em>
+            <h3>2. Configure the CLI application</h3>
+            <blockquote>As we didn't use <em>.php</em> as a file extension, make sure to use the shebang line to execute as PHP.</blockquote>
+            <pre class="normalize-code"><code class="language-php">
+                #!/usr/bin/env php
+                ?php
+
+
+                use Neoan\Cli\Application;
+                use Neoan\NeoanApp;
+
+                $projectPath = __DIR__;
+                require_once $projectPath . '/vendor/autoload.php';
+
+                $pathToSourceFiles = $projectPath . '/src';
+                $publicPath = $projectPath . '/public';
+
+                // Note that we add a third parameter here, the CLI-path
+                // In our case, it's the same as the project path
+                $app = new NeoanApp($pathToSourceFiles, $publicPath, $projectPath);
+
+                // Now let's pass the initialized app into our console application
+                $console = new Application($app);
+                $console->run();
+            </code></pre>
+            <h3>3. Test CLI setup</h3>
+            <code>php cli list</code>
+        </div>
+        <div class="place-start border-l-3 border-secondary pl-3">
+            <h2>Just let me code!</h2>
+            <p>
+                The actual fastest way to get you to your application is by using one of the starter packages:
+                <a href="/starter-projects">Starter Projects</a>
+            </p>
+            <h2>Prerequisites</h2>
+            <ul>
+                <li>PHP - min. 8.1</li>
+                <li>Composer - min. 2.x</li>
+            </ul>
+        </div>
+    </div>
+
+
+</section>

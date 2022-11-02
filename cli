@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+
+use Configuration\WebRouteCommand;
+use Neoan\Cli\Application;
+use Neoan\NeoanApp;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$app = new NeoanApp(__DIR__ . '/src', __DIR__ . '/public', __DIR__);
+
+$console = new Application($app);
+$console->add(new WebRouteCommand($app));
+$console->run();

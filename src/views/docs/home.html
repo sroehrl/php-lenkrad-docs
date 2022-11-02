@@ -1,0 +1,57 @@
+<section>
+    <h1>Getting Started</h1>
+    <p>
+        In order to get you set up, you can either create your own setup from scratch (see <a href="/quick-start">Quick Start</a>)
+        or use one of the <a href="/starter-projects">starter projects</a>. <br>
+        Either way, in order to follow this documentation a working LENKRAD application is necessary.
+    </p>
+    <h2>Basics</h2>
+    <p>
+        LENKRAD is an all-purpose framework, but we are going to concentrate on two of the most common use-cases in web development:
+    </p>
+    <ul>
+        <li>API - a backend for your powerful frontend, app or embedded software</li>
+        <li>SSR - A all-in-one monolith to generate anything from your personal site to your SAAS business</li>
+    </ul>
+    <p>
+        This documentation is a living document inspired by your feedback & questions.
+    </p>
+    <h2>Terminology</h2>
+    <p>
+        Sometimes it's necessary to refer to concepts that aren't clear due to conflicting definitions.
+        To avoid confusion as far as possible, we added a glossary:
+    </p>
+    <div class="grid grid-cols-3 xl:w-4-5 xxl:w-3/5 gap-3">
+        <div class="border-b-2 border-primary font-lg">Term</div>
+        <div class="border-b-2 border-primary font-lg">Description</div>
+        <div class="border-b-2 border-primary font-lg">Notes</div>
+        <h3 id="attributes">Attributes</h3>
+        <p>
+            In PHP, attributes is the name given to what most other languages refer to as <em>annotation</em>.
+            The feature was introduced in PHP8 LENKRAD makes heavy use of its capabilities.
+        </p>
+        <p>
+
+        </p>
+        <h3 id="web-route">Web-route</h3>
+        <p>Refers to a Route answering with markup (HTML) using a template.</p>
+        <p>This very page is a web-route.</p>
+        <h3 id="api-route">API-route</h3>
+        <p>Similarly, an API-route is intended to be machine read.</p>
+        <p>LENKRAD's default response-handler defaults to JSON-format.</p>
+        <h3 id="templating">Templating</h3>
+        <p>Templates are markup-shells (HTML) the rendering process uses to apply data to. </p>
+        <p>Demo: click <a href="docs?say=HELLO">here</a>, watch the url and then see this: {{say}}</p>
+        <h3 id="middleware">Middleware</h3>
+        <p>
+            In LENKRAD, this concept can be simplified down to code that is executed before your controller logic applies.
+            Middleware can be chained to facilitate guards (e.g. authentication) or to ensure availability of certain data, permissions etc.
+        </p>
+        <p>
+            Middleware normalization is very little opinionated in LENKRAD as execution chains are loosely coupled.
+        </p>
+        <h3 id="di">Dependency Injection</h3>
+        <p>The concept refers to injecting dependencies rather than coupling them. This is were Interfaces shine.</p>
+        <p>LENKRAD has an auto-wire dependency injection. This allows you to inject concrete dependencies automatically as needed.</p>
+    </div>
+</section>

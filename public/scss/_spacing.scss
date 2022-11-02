@@ -1,0 +1,44 @@
+@import "mixins";
+
+
+@for $i from 0 through 20 {
+  .p-#{$i} {
+    padding: ($i * .3rem)
+  }
+  .m-#{$i} {
+    margin: ($i * .3rem)
+  }
+  .z-#{$i}{
+    z-index: $i;
+  }
+
+  @each $short, $direction in $directionMap{
+    .p#{$short}-#{$i} {
+      padding-#{$direction}: ($i * .3rem);
+    }
+    .m#{$short}-#{$i} {
+      margin-#{$direction}: ($i * .3rem);
+    }
+    .#{$direction}-#{$i} {
+      #{$direction}: ($i * .3rem);
+    }
+    .-#{$direction}-#{$i} {
+      #{$direction}: (-1 * $i * .3rem);
+    }
+  }
+}
+.m-x-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.w-full{
+  width: 100%;
+}
+@for $i from 1 through 5{
+  .w-#{$i}\/5{
+    max-width: unquote(calc( 100/5*$i) + "%");
+  }
+  @include mapBreakPoints("w-#{$i}\\/5", true){
+    max-width: unquote(calc(100/5*$i) + "%") !important;
+  }
+}

@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+
+    <!-- CSS Reset -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #343434;
+        }
+    </style>
+</head>
+<body>
+<header class="text-white p-4 border-t-5 border-accent" style="background: rgb(73, 77, 85);">
+    <a href="/" class="font-xl text-center block">LENKRAD - The modern PHP framework</a>
+</header>
+<section class="text-center">
+    <h1>404 - not found</h1>
+    <h2>Ups... This is not what you are looking for, is it?</h2>
+    <p>Unresolved: {{page}}</p>
+    <button onclick="back()" class="button-body-dark">Back</button> or
+    <a href="/" class="button-body-dark">Take me home, country roads...</a>
+</section>
+<script>
+    function back(){
+        window.history.back()
+    }
+</script>
+</body>
+</html>

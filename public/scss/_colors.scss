@@ -1,0 +1,10 @@
+@each $name, $value in $colors {
+  $added: (
+          "#{$name}-light": scale-color($value, $lightness: 30%),
+          "#{$name}-dark": scale-color($value, $blackness: 30%)
+  );
+  $colors: map-merge($added, $colors);
+}
+
+
+

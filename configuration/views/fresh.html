@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <base href="{{webPath}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+
+    <!-- CSS Reset -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+
+    <!-- Prism Code highlighter -->
+
+    <link rel="stylesheet" href="prism/prism.css" data-manual>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="style.css">
+
+
+
+</head>
+<body class="bg-neutral-dark">
+<header class="text-white p-4 border-t-5 border-accent" style="background: rgb(73, 77, 85);">
+    <a href="/" class="font-xl text-center block">LENKRAD - The modern PHP framework</a>
+    <div class="text-center"> {{name}}</div>
+</header>
+<section>{{main}}</section>
+<footer class="mt-5 bg-neutral border-secondary-light border-t-2 p-4">
+    <div class="grid grid-cols-5">
+        <div class="copy">
+            &copy; {{year}} neoan OPENSOURCE
+        </div>
+        <div class="span-x-3">
+            This site is using <a href="https://github.com/sroehrl/lenkrad-web-starter#readme">lenkrad-web-starter</a>
+            and had a server processing time of {{delivered}}s
+        </div>
+        <div class="github place-start-end">
+            <a href="https://github.com/sroehrl">Support me on Github</a>
+        </div>
+    </div>
+
+</footer>
+<script src="prism/prism.js"></script>
+<script src="//unpkg.com/alpinejs" defer></script>
+<script src="js/global.js"></script>
+</body>
+</html>

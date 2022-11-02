@@ -1,0 +1,49 @@
+*, *:after, *:before{
+  //box-sizing: inherit;
+}
+html {
+  box-sizing: border-box;
+}
+body{
+  color: map-get($colors, "body");
+  font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  font-size: 1.1em;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+// headlines
+@for $i from 1 through 6 {
+  h#{$i} {
+    line-height: 1.2;
+    font-size: 3-$i*.6 + rem;
+    font-weight: 300;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+}
+
+// pre/code
+pre {
+  border-left: .3rem solid map-get($colors, "primary");
+  padding: 1em;
+  border-radius: .3em;
+}
+
+// a
+
+a{
+  color: map-get($colors, "primary");
+  text-decoration: none;
+  &:hover{
+    color: map-get($colors, "primary-light");
+  }
+}
+
+// blockquote
+blockquote{
+  border-left: 0.3rem solid #d1d1d1;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 1rem 1.5rem;
+}

@@ -1,0 +1,21 @@
+@each $name, $color in $colors {
+  .text-#{$name} {
+    color: $color;
+  }
+}
+
+$fontSizes: ("sm": .5rem, "md": .8rem, "lg": 1.4rem, "xl": 2.2rem);
+
+@each $name, $size in $fontSizes{
+  .font-#{$name}{
+    font-size: $size;
+  }
+}
+
+$aligns: ("center", "right", "justify", "inherit", "start", "end");
+
+@each $name in $aligns{
+  .text-#{$name}{
+    text-align: unquote($name);
+  }
+}

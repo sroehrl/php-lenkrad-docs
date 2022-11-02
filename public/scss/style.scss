@@ -1,0 +1,36 @@
+$colors: (
+        "primary": #81BECE,
+        "secondary": #27b3e1,
+        "warning": #ca921a,
+        "danger": #bc2828,
+        "smug": #f1f1f1,
+        "white": #f8f8f8,
+        "neutral" : #373737,
+        "body": #c6cdd3,
+        "accent": rgb(117, 193, 129)
+);
+$breakPoints: (
+        "sm": 576px,
+        "md": 768px,
+        "lg": 992px,
+        "xl": 1200px,
+        "xxl": 1400px
+);
+
+$directionMap: (
+        "t": "top",
+        "r": "right",
+        "b": "bottom",
+        "l": "left"
+);
+
+
+@import "colors";
+@import "behavior";
+@import "elements";
+@import "button";
+@import "background";
+@import "text";
+@import "spacing";
+@import "grid-flex";
+@import "shadows";

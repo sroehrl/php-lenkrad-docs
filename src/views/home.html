@@ -1,0 +1,128 @@
+<section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
+    <h1 class="text-primary mb-8 mt-10 text-center">Performance meets convenience!</h1>
+    <p class="text-justify mb-5 m-x-auto" style="max-width: 940px">
+        After decades of repetitive tasks, tedious setups & painful workarounds, PHP & LENKRAD is finally ready to easy your pain.
+        Find out why spending a little time on a different framework will put your scepticism to rest.
+    </p>
+
+    <div class="grid grid-cols-3 gap-5 mb-5 m-x-auto xxl:w-3/5">
+        <a href="/quick-start" class="border-t-3 border-primary bg-neutral p-3 text-center cursor-pointer text-primary hover:bg-primary hover:text-white">
+            <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+
+            <p class="font-lg">Quick start</p>
+        </a>
+        <a href="/docs" class="border-t-3 border-secondary bg-neutral p-3 text-center cursor-pointer text-secondary hover:bg-secondary hover:text-white">
+            <svg class="" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <p class="font-lg">Docs</p>
+        </a>
+        <a href="/starter-projects" class="border-t-3 border-accent bg-neutral p-3 text-center cursor-pointer text-accent hover:bg-accent hover:text-white">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <p class="font-lg">Starter Projects</p>
+        </a>
+    </div>
+    <div class="border-r-1 border-accent p-3 bg-neutral mt-12">
+        <h2 class="text-primary mb-8 text-center">Why should I be interested in LENKRAD?</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-5" x-data="{tab:'modern', isActive(checkTab){ return checkTab === this.tab}}" x-init="$watch('tab' , () => highlightCode())">
+            <div class="grid gap-y-3" style="place-self: start stretch">
+                <button x-on:click="tab='modern'" :class="{'border-l-3 border-accent': isActive('modern')}" class="bg-neutral border-t-0 border-l-0 border-r-0 border-b-0 text-white-dark cursor-pointer text-start hover:bg-accent-dark p-2">Modern</button>
+                <button x-on:click="tab='easy'" :class="{'border-l-3 border-primary': isActive('easy')}" class="bg-neutral border-t-0 border-l-0 border-r-0 border-b-0 text-white-dark cursor-pointer text-start hover:bg-accent-dark p-2">Easy to learn</button>
+                <button x-on:click="tab='beautiful'" :class="{'border-l-3 border-secondary': isActive('beautiful')}" class="bg-neutral border-t-0 border-l-0 border-r-0 border-b-0 text-white-dark cursor-pointer text-start hover:bg-accent-dark p-2">Beautiful to write</button>
+                <button x-on:click="tab='secure'" :class="{'border-l-3 border-warning-dark': isActive('secure')}" class="bg-neutral border-t-0 border-l-0 border-r-0 border-b-0 text-white-dark cursor-pointer text-start hover:bg-accent-dark p-2">Secure & performant</button>
+            </div>
+            <div class="code-content span-x-2" >
+                <template x-if="tab==='modern'">
+                    <div>
+                        <h2>Embracing the growth of PHP</h2>
+                        <p>
+
+                            Have you ever wondered what kind of overhead & performance restraints you are willing to accept due to backward compatability of legacy frameworks?
+                        </p>
+                        <p>
+                            Using newer native functions means utilizing the power of C with the syntactic sugar of PHP. Additionally, it's more beautiful:
+                        </p>
+                        <pre class="normalize-code"><code class="language-php">
+                        $movie = 'Anaconda';
+
+                        // older PHP versions
+                        switch($movie) {
+                            case 'Anaconda':
+                                $rating = 3.1;
+                                break;
+                            case 'Men in Black':
+                                $rating = 4.7;
+                                break;
+                                ...
+                        }
+
+                        // since PHP 8.0
+                        $rating = match($movie) {
+                            'Anaconda' => 3.1,
+                            'Men in Black' => 4.7,
+                            ...
+                        }
+                    </code></pre>
+                        <p>
+                            The question remains: does your framework and its packages work like {{year}}?
+                        </p>
+                    </div>
+
+                </template>
+                <template x-if="tab==='easy'">
+                    <div>
+                        <h2>Less magic, more help</h2>
+                        <p>
+                            LENKRAD is designed in a way that allows your IDE to better support you without any plugins. Additionally, achieving familiarity is simplified as logical patterns are used:
+                        </p>
+
+                        <pre class="normalize-code"><code class="language-php">
+                        $inputStreamedOrPostedAsAssocArray = Request::getInputs();
+
+                        // Guessable behavior and conventions:
+                        $particularInputValue              = Request::getInput('title');
+                        $queryParametersAsAssocArray       = Request::getQueries();
+                        $particularQueryParameterValue     = Request::getQuery('search');
+
+                        $movie = new Movie();
+                        $movie->title = $particularInputValue;
+
+                        return $movie->store();
+                    </code></pre>
+                    </div>
+
+                </template>
+                <template x-if="tab==='beautiful'">
+                    <div>
+                        <h2>Concise and easy on the eyes</h2>
+                        <p>
+                            Code is art. It would be disingenuous to pretend it's not a question of taste. Readability therefore always includes liking what you see.
+                        </p>
+
+                        <pre class="normalize-code"><code class="language-php">
+                        [
+                            'page' => $page,
+                            'limit' => $perPage
+                        ] = Request::getQueries();
+
+                        return Movie::paginate($page, $perPage)->get();
+                    </code></pre>
+                    </div>
+
+                </template>
+                <template x-if="tab==='secure'">
+                    <div>
+                        <h2>Feeling safe is feeling happy</h2>
+                        <p>
+                            The architecture of LENKRAD is designed to protect your application from the most dangerous element: the coder. Unintentional security vulnerabilities are almost impossible to produce.
+                        </p>
+                        <p>
+                            Meanwhile, we kept the breathtaking performance goals of neoan3 alive: speed will not be your concern.
+                        </p>
+
+                    </div>
+
+                </template>
+            </div>
+        </div>
+    </div>
+
+</section>

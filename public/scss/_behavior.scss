@@ -1,0 +1,39 @@
+$displays: ("block", "inline-block", "flex", "inline-flex");
+
+@each $display in $displays {
+  .#{$display}{
+    display: unquote($display);
+  }
+}
+
+$positions: ("absolute", "sticky", "fixed", "relative");
+
+@each $position in $positions {
+  .#{$position}{
+    position: unquote($position);
+  }
+}
+$cursors: ("pointer");
+
+@each $cursor in $cursors{
+  .cursor-#{$cursor}{
+    cursor: pointer;
+  }
+
+}
+
+// scrollbar
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: map-get($colors, "secondary");
+}
+::-webkit-scrollbar-thumb:hover {
+  background: map-get($colors, "secondary-dark");;
+}

@@ -1,0 +1,7 @@
+@import "mixins";
+
+@each $name, $color in $colors {
+  @include withHover("bg-#{$name}") {
+    background-color: $color;
+  }
+}

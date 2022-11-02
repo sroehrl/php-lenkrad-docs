@@ -1,0 +1,22 @@
+
+@each $name, $value in $colors{
+  .button-#{$name} {
+    border-color: $value;
+    background-color: $value;
+    color: white;
+    &:hover{
+      background-color: transparent;
+      border-color: $value;
+      color: $value;
+    }
+  }
+}
+[class^=button-]{
+  border-width: 1px;
+  border-radius: 5px;
+  border-style: solid;
+  padding: 3px 7px;
+  cursor: pointer;
+  text-wrap: none;
+  border-color: transparent;
+}

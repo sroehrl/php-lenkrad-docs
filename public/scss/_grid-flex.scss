@@ -1,0 +1,53 @@
+@import "mixins";
+
+.flex-1{
+  flex: 1;
+}
+$properties: ("wrap");
+
+@each $property in $properties {
+  .flex-#{$property}{
+    flex-#{$property}: unquote($property);
+  }
+}
+
+.grid{
+  display: grid;
+  grid-template-rows: auto;
+}
+@for $i from 2 through 12 {
+  .grid-cols-#{$i}{
+    grid-template-columns: repeat($i, 1fr);
+  }
+  @include mapBreakPoints("grid-cols-#{$i}"){
+    grid-template-columns: repeat($i, 1fr);
+  }
+  .gap-#{$i} {
+    gap: $i * .3rem;
+    grid-column-gap: $i * .3rem;
+    grid-row-gap: $i * .3rem;
+  }
+  .gap-x-#{$i} {
+    grid-column-gap: $i * .3rem;
+  }
+  .gap-y-#{$i} {
+    grid-row-gap: $i * .3rem;
+  }
+  .span-x-#{$i} {
+    grid-column: span $i;
+  }
+
+}
+
+$selfPlacement: ("start", "stretch", "center", "auto", "end", "normal", "left", "right");
+
+@each $placement in $selfPlacement{
+  .place-#{$placement}{
+    place-self: unquote($placement);
+  }
+  @each $subPlacement in $selfPlacement{
+    .place-#{$placement}-#{$subPlacement}{
+      place-self: unquote($placement) unquote($subPlacement);
+    }
+  }
+}

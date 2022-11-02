@@ -1,0 +1,42 @@
+
+$keys: map-keys($breakPoints);
+
+@mixin forBreakPoint($width, $index){
+  @if($index < length($breakPoints)) {
+    @media only screen and (min-width: #{$width}) and (max-width: map-get($breakPoints, nth($keys, $index + 1))){
+      @content;
+    }
+  } @else {
+    @media (min-width: #{$width}) {
+      @content;
+    }
+  }
+
+}
+
+@mixin mapBreakPoints($ruleName, $restricted: false){
+
+  @each $name, $value in $breakPoints{
+    $index: 99;
+    @if $restricted {
+      $index: index($keys, $name);
+    }
+
+    @include forBreakPoint($value, $index) {
+      .#{$name}\:#{$ruleName} {
+        @content;
+      }
+    }
+  }
+}
+
+@mixin withHover($ruleName){
+  .#{$ruleName} {
+    @content;
+  }
+  .hover\:#{$ruleName}{
+    &:hover{
+      @content;
+    }
+  }
+}
