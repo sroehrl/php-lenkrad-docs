@@ -51,6 +51,40 @@
             <h3>6. Test your app</h3>
             <code>cd public</code> <br>
             <code>php -S localhost:8000 index.php</code>
+
+            <h2>Database Connectivity</h2>
+            <p>
+                LENKRAD uses a database adapter to interact with databases in a standardized way.
+                Own database adapters have to implement <em>Neoan\Database\Adapter</em> and be able to handle the
+                <a href="https://github.com/sroehrl/neoan3-db#dbeasyselectorstring--conditionarray-callfunctions-debug">easy-markup</a>.
+                For this quick setup we will assume the use of MySQL.
+            </p>
+            <code>composer require neoan.io/legacy-db-adapter</code>
+            <pre class="normalize-code"><code class="language-php">
+
+                use Neoan\Database\Database;
+                use NeoanIo\MarketPlace\DatabaseAdapter;
+                use Neoan\Helper\Env;
+
+                $dbClient = [
+                    'host' => Env::get('DB_HOST', 'localhost'),
+                    'name' => Env::get('DB_NAME', 'neoan_io'),
+                    'port' => Env::get('DB_PORT', 3306),
+                    'user' => Env::get('DB_USER', 'root'),
+                    'password' => Env::get('DB_PASSWORD', ''),
+                    'charset' => Env::get('DB_CHARSET', 'utf8mb4'),
+                    'casing' => Env::get('DB_CASING', 'camel'),
+                    'assumes_uuid' => Env::get('DB_UUID', false)
+                ];
+                Database::connect(new DatabaseAdapter($dbClient));
+            </code></pre>
+            <p>
+                It's up to you where you place this code. You could decide to place it as a middleware
+                or in a general setup file. However, make sure to execute it prior to any model-interactions.
+                In most cases you want to add this to your application bootstrapping after initialization of the app and
+                before execution ($app->run())
+            </p>
+
             <h2>That's it for the app itself.</h2>
             <p>
                 However, let's set up the CLI application as well.

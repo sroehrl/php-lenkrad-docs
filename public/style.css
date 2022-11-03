@@ -132,6 +132,28 @@ blockquote {
   padding: 1rem 1.5rem;
 }
 
+.button-contrast-light {
+  border-color: #7a818d;
+  background-color: #7a818d;
+  color: white;
+}
+.button-contrast-light:hover {
+  background-color: transparent;
+  border-color: #7a818d;
+  color: #7a818d;
+}
+
+.button-contrast-dark {
+  border-color: #454545;
+  background-color: #454545;
+  color: white;
+}
+.button-contrast-dark:hover {
+  background-color: transparent;
+  border-color: #454545;
+  color: #454545;
+}
+
 .button-accent-light {
   border-color: #9ed4a7;
   background-color: #9ed4a7;
@@ -429,6 +451,17 @@ blockquote {
   color: rgb(117, 193, 129);
 }
 
+.button-contrast {
+  border-color: rgb(73, 77, 85);
+  background-color: rgb(73, 77, 85);
+  color: white;
+}
+.button-contrast:hover {
+  background-color: transparent;
+  border-color: rgb(73, 77, 85);
+  color: rgb(73, 77, 85);
+}
+
 [class^=button-] {
   border-width: 1px;
   border-radius: 5px;
@@ -437,6 +470,22 @@ blockquote {
   cursor: pointer;
   text-wrap: none;
   border-color: transparent;
+}
+
+.bg-contrast-light {
+  background-color: #7a818d;
+}
+
+.hover\:bg-contrast-light:hover {
+  background-color: #7a818d;
+}
+
+.bg-contrast-dark {
+  background-color: #454545;
+}
+
+.hover\:bg-contrast-dark:hover {
+  background-color: #454545;
 }
 
 .bg-accent-light {
@@ -655,6 +704,22 @@ blockquote {
   background-color: rgb(117, 193, 129);
 }
 
+.bg-contrast {
+  background-color: rgb(73, 77, 85);
+}
+
+.hover\:bg-contrast:hover {
+  background-color: rgb(73, 77, 85);
+}
+
+.text-contrast-light {
+  color: #7a818d;
+}
+
+.text-contrast-dark {
+  color: #454545;
+}
+
 .text-accent-light {
   color: #9ed4a7;
 }
@@ -761,6 +826,10 @@ blockquote {
 
 .text-accent {
   color: rgb(117, 193, 129);
+}
+
+.text-contrast {
+  color: rgb(73, 77, 85);
 }
 
 .font-sm {
@@ -3371,6 +3440,30 @@ blockquote {
   place-self: right right;
 }
 
+.shadow-contrast-light {
+  box-shadow: 2px 1px 2px #7a818d;
+}
+
+.hover\:shadow-contrast-light:hover {
+  box-shadow: 2px 1px 2px #7a818d;
+}
+
+.border-contrast-light {
+  border-color: #7a818d;
+}
+
+.shadow-contrast-dark {
+  box-shadow: 2px 1px 2px #454545;
+}
+
+.hover\:shadow-contrast-dark:hover {
+  box-shadow: 2px 1px 2px #454545;
+}
+
+.border-contrast-dark {
+  border-color: #454545;
+}
+
 .shadow-accent-light {
   box-shadow: 2px 1px 2px #9ed4a7;
 }
@@ -3693,6 +3786,18 @@ blockquote {
 
 .border-accent {
   border-color: rgb(117, 193, 129);
+}
+
+.shadow-contrast {
+  box-shadow: 2px 1px 2px rgb(73, 77, 85);
+}
+
+.hover\:shadow-contrast:hover {
+  box-shadow: 2px 1px 2px rgb(73, 77, 85);
+}
+
+.border-contrast {
+  border-color: rgb(73, 77, 85);
 }
 
 .border-t {

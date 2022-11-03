@@ -1,11 +1,600 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
     <h1>{{name}}</h1>
-    <p>{{name}} introduction</p>
+    <p>
+        Models are the hear and soul of dealing with persistent data.
+        LENKRAD has a sophisticated ORM automation to deal with this common topic.
+        This means that when we talk about models, we always talk about databases as well.
+    </p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-primary">The {{name}} class</a>
+        <a href="/docs/models#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/models#define" class="button-contrast-light">Defining a model</a>
+        <a href="/docs/models#collections" class="button-contrast-light">Collections</a>
+        <a href="/docs/models#usage" class="button-contrast-light">Using a model</a>
+        <a href="/docs/models#pagination" class="button-contrast-light">Pagination</a>
+        <a href="/docs/models#magic" class="button-contrast-light">Magic methods</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
         <h2 id="class">The {{name}} class</h2>
+        <p>
+            LENKRAD uses one file to declare and interact with models. This includes:
+        </p>
+        <ul>
+            <li>Database interactions</li>
+            <li>Database migrations</li>
+            <li>Object relational mapping</li>
+        </ul>
+
+        <p>A new instance of this model now has the following <em>static</em> methods available:</p>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="border-b-2 border-primary font-lg span-x-2">Method</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p class="span-x-2">get(int|string $id)</p>
+            <p>Retrieves an instance of the model by primary id.</p>
+            <p class="span-x-2">retrieve(array $condition, array $filter = [])</p>
+            <p>Returns a <a href="/docs/models#collections">collection</a></p>
+            <p class="span-x-2">retrieveOne(array $condition, array $filter = [])</p>
+            <p>Retrieves an instance of the model based on condition and/or filter</p>
+            <p class="span-x-2">retrieveOneOrCreate(array $condition)</p>
+            <p>If a model with the condition exists, it's retrieved, else it's created.</p>
+            <p class="span-x-2">paginate(int $page = 1, int $pageSize = 30)</p>
+            <p>Returns a <a href="/docs/models#pagination">Pagination</a> instance</p>
+            <p class="span-x-2">declare()</p>
+            <p>Returns the structure in a standardized format (mainly to be used for migrations & transactions)</p>
+        </div>
+        <p>And the following <em>initiated</em> methods:</p>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="border-b-2 border-primary font-lg span-x-2">Method</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p class="span-x-2">store()</p>
+            <p>Executes database transaction(s) to store model changes.</p>
+            <p class="span-x-2">delete(bool $hard = false)</p>
+            <p>Soft or hard deletes the mapped entity.</p>
+            <p class="span-x-2">toArray()</p>
+            <p>Converts the model object to an assoc array</p>
+            <p class="span-x-2">rehydrate()</p>
+            <p>Refills (resets) the instance with database driven values</p>
+            <p class="span-x-2">getTransactionMode()</p>
+            <p>Returns the TransactionType enum currently active (INSERT | UPDATE)</p>
+            <p class="span-x-2">setTransactionMode(TransactionType $type)</p>
+            <p>Overrides the internal transaction mode.</p>
+            <p class="span-x-2">__call()</p>
+            <p>See <a href="/docs/models#magic">Magic methods</a></p>
+        </div>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="define">Defining a Model</h2>
+        <p>
+            In order to create a model new, you simply extend the <a href="/docs/models#class">Model class</a>
+            and give it the properties you need.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App\Models;
+
+            use Neoan\Model\Model;
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Attributes\IsUnique;
+            use Neoan\Model\Attributes\Transform;
+            use Neoan\Model\Transformers\Hash;
+
+            class User extends Model
+            {
+                #[IsPrimaryKey]
+                public int $id;
+
+                #[IsUnique]
+                public string $email;
+
+                public string $userName;
+
+                #[Transform(Hash::class)]
+                public string $password;
+
+            }
+        </code></pre>
+        <h3>Default & Custom Types</h3>
+        <p>
+            Depending on the database adapter you use (see <a href="/quick-start">Quick Start</a>),
+            your PHP types will translate into a default column type. For example, the recommended MySQL adapter
+            will assume a string to be <em>varchar</em> with the length of 255, a PHP integer to be <em>int</em> with a
+            length
+            of 11 and so on. If you want to influence this behavior, you can use attributes to do so. The generic
+            attribute
+            <em>Type</em> allows you to be very specific as well:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+            use Neoan\Model\Transformers\Type;
+            ...
+            #[Type('LONGTEXT')]
+            public $post;
+            ...
+        </code></pre>
+        <p>
+            The following model attributes are shipped with LENKRAD
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Attribute</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>HasMany(string $modelName, array $matchingRule = [])</p>
+            <p>Enables automatic loading of one-to-many relationships by attaching a <a href="/docs/models#collections">collection</a>
+            </p>
+            <p>Ignore</p>
+            <p>Signifies a property that shall be ignored by database transactions.</p>
+            <p>Initialize(mixed $setter)</p>
+            <p>Attaches a value or instance to the model at creation. (For example a date-converter)</p>
+            <p>IsForeignKey(string $table, string $property, string $modelName)</p>
+            <p>Enhances relationship lookup performance and enables <a href="/docs/models#magic">magic relationships</a>
+            </p>
+            <p>IsPrimaryKey</p>
+            <p>REQUIRED! Indicates the index of a model for many operations.</p>
+            <p>IsUnique</p>
+            <p>handles UNIQUE constraints</p>
+            <p>Transform(string $transformerClass)</p>
+            <p>
+                Generic hook for transforming values bi- or one-directional (own transformers must implement
+                Neoan\Model\Interfaces\Transformation).
+                LENKRAD ships with the transformers <em>Hash</em> and <em>CurrentTimeIn</em> out of the box.
+            </p>
+            <p>Type(string $type, int $length = null, string $default = null)</p>
+            <p>As discussed, enables custom column-type-matching</p>
+        </div>
+
+        <h3>Constants</h3>
+        <p>
+            To escape further default behavior, constants are used. With new Projects, there shouldn't
+            be any necessity for that.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            const tableName = 'user_table';
+        </code></pre>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Constant</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>tableName</p>
+            <p>Overrides the usage of the class name as the table name.</p>
+        </div>
+        <h3>Traits</h3>
+        <p>
+            To simplify data structure, traits offer an easy way to escape duplication. LENKRAD offers the following
+            model traits out of the box:
+        </p>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="border-b-2 border-primary font-lg">Trait</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <p>Setter</p>
+            <p class="span-x-2">
+                Enables the model to deal with private and/or readonly properties.
+                It also exposes the method <em>set(string $propertyName, mixed $value)</em>
+                to the model.
+            </p>
+            <p>TimeStamps</p>
+            <p class="span-x-2">
+                Shorthand for the common fields <strong>createdAt, updatedAt, and deletedAt</strong>.
+                In addition to allowing for soft-deletion, this trait handles time format transformations.
+            </p>
+        </div>
+        <h3>Full Example</h3>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App\Models;
+
+            use Neoan\Model\Model;
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Attributes\IsUnique;
+            use Neoan\Model\Attributes\Transform;
+            use Neoan\Model\Transformers\Hash;
+            use Neoan\Model\Traits\Setter;
+            use Neoan\Model\Traits\TimeStamps;
+
+            class User extends Model
+            {
+
+                #[IsPrimaryKey]
+                public readonly int $id;
+
+                #[IsUnique]
+                public string $email;
+
+                public string $userName;
+
+                #[Transform(Hash::class)]
+                public string $password;
+
+                use Setter;
+                use TimeStamps;
+            }
+        </code></pre>
+        <h3>Migration</h3>
+        <p>
+            Creating and updating tables according to your model must be done whenever changes to your
+            model declaration have been conducted. The <a href="/docs/cli-basics">cli tool</a> makes this possible using
+            one command.
+        </p>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="collections">Collections</h2>
+        <p>
+            A collection instance is useful when dealing with multiple different instances of a given model.
+            This is commonly the case when retrieving multiple entries. A collection is iterable and offers useful
+            methods:
+        </p>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <p>each(fn)</p>
+            <p class="span-x-2">
+                Expects a closure or invokable while iterating over the instances.
+            </p>
+            <p>add(Model $instance)</p>
+            <p class="span-x-2">
+                Manually adds an instance to the collection.
+            </p>
+            <p>toArray</p>
+            <p class="span-x-2">
+                Returns all entries as one array.
+            </p>
+            <p>store</p>
+            <p class="span-x-2">
+                Runs store commands for all instances contained in the collection (beware of performance!).
+            </p>
+            <p>count</p>
+            <p class="span-x-2">
+                Returns an integer with the number of held model instances.
+            </p>
+        </div>
+        <h3>Examples</h3>
+        <pre class="normalize-code"><code class="language-php">
+            // this is an example, please don't take this seriously:
+
+            // return all users as collection
+            $userCollection = User::retrieve();
+
+            // a collection is iterable:
+            foreach($userCollection as $userInstance){
+                ...
+            }
+
+            // but you likely want to make use of typing
+            $userCollection->each(function(User $user){
+                if(str_ends_with($user->email, '@protonmail.com')) {
+                    $this->sendSecureEmail($user);
+                }
+            });
+
+            // how many users?
+            $registeredUsers = $userCollection->count();
+
+            // add a new user
+            if($registeredUsers &lt; $this->marketingGoal) {
+                for($i = 0; $i &lt; $this->marketingGoal - $registeredUsers; $i++) {
+                    $bot = new User([
+                        'email' => "myspam+{$i}@gmail.com",
+                        'userName' => 'bot-' . $i,
+                        'password' => 'you-wish-800-' . $i
+                    ]);
+                    $userCollection->add($bot);
+                }
+            }
+
+            // since we got ALL users, this could take a while...
+            $userCollection->store();
+
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="usage">Using a model</h2>
+        <h3>Retrieval</h3>
+        <h4 class="font-md">Conditions</h4>
+        <p>
+            Let's begin by exploring how conditions work.
+            Conditions are passed into a model as assoc arrays
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            $condition = [
+                'email' => 'adam@email.com'
+            ];
+
+            $user = User::retrieveOne($condition);
+        </code></pre>
+        <p>
+            With the MySQL adapter, this roughly translates to <br>
+            <code>SELECT * FROM user WHERE email = "adam@email.com"</code>.
+            Roughly, as in reality queries are optimized and executed as prepared statements.
+            The following examples should help you to read & write conditions:
+        </p>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="border-b-2 border-primary font-lg">Array</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <p>['email' => '%@email.com']</p>
+            <p class="span-x-2">Retrieve where email ends with "@email"</p>
+            <p>['id' => '>100']</p>
+            <p class="span-x-2">Retrieve where id is greater than 100</p>
+            <p>['userName' => '!adam']</p>
+            <p class="span-x-2">Retrieve where userName is not "adam"</p>
+            <p>['updatedAt' => '!']</p>
+            <p class="span-x-2">Retrieve where updatedAt is not NULL (aka WHERE the record was updated at least
+                once)</p>
+            <p>['deletedAt' => null] or simply ['^deletedAt']</p>
+            <p class="span-x-2">Retrieve where deletedAt is NULL (aka undeleted entries)</p>
+        </div>
+        <p>
+            Conditions are chained as <em>AND</em>, so <br>
+            <code>['email' => '%@email.com', 'userName' => '!adam']</code> <br>
+            retrieves records that meet both criteria.
+        </p>
+        <h4 class="font-md">Filters</h4>
+        <p>
+            Both shipped adapters currently only provide two filters:
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Filter</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>orderBy => [string $property, string $ascOrDesc]</p>
+            <p>Influences the sorting order of results</p>
+            <p>limit => [int $offset, int $rowCount]</p>
+            <p>Paginates results</p>
+        </div>
+        <pre class="normalize-code"><code class="language-php">
+            $filter = [
+                'orderBy' => ['userName', 'desc'],
+                'limit' => [0,10]
+            ];
+
+            $user = User::retrieve([], $filter);
+        </code></pre>
+        <p>
+            This would return 10 entries sorted by userName in reverse alphabetical order.
+        </p>
+        <blockquote>
+            Note: If you are worried about limited complexity, rest assured that
+            direct usage of the Database class can handle any potential bottleneck.
+        </blockquote>
+        <h4 class="font-md">Security</h4>
+        <p>
+            Conditions are matched against the structure and type of a given model and transactions are executed as
+            prepared statements.
+            This annihilates user-input concerns.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            // yes, this is save to do
+            $postedInput = Request::getInputs();
+            $user = User::retrieveOne($postedInput);
+        </code></pre>
+        <h3>Create</h3>
+        <p>
+            Creating a new model entry is as straight forward as it can be:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            // as empty instance
+            $user = new User();
+
+
+            // write
+            $user->userName = 'Adam'; // if type is correct, will set
+
+            // or directly with values passed as array
+            $user = new User(['userName' => 'Adam']);
+
+            // read
+            echo $user->userName; // "Adam"
+
+            // write
+            $user->userName = 'Ben'; // overrides old value
+
+            try{
+                $user->store();
+            } catch(\Exception $e) {
+                // ups... some properties are neither nullable nor have a default value
+                // so we have to set email & password
+            }
+
+            $user->password = '123123';
+            $user->email = 'ben@email.com';
+
+            // if a setter is used you can also do:
+            $user->set('password', '123123')
+                 ->set('email', 'ben@email.com');
+
+
+            $user->store();
+
+            // after database transaction, we have an id (or other primary key)!
+            $userId = $user->id;
+
+        </code></pre>
+        <h3>Update</h3>
+        <p>
+            Updating an entry is no different from creation.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            $user = User::retrieveOne(['email' => 'ben@email.com']);
+
+            // rename
+            $user->userName = 'Benjamin';
+
+            // save changes to db
+            $user->store();
+        </code></pre>
+        <h3>Collection properties</h3>
+        <p>
+            If you looked at the attribute-section of <a href="/docs/models#class">the model class</a>,
+            you might have noticed the <em>HasMany</em>-attribute. In a real world scenario, one might have two models:
+        </p>
+        <p>Movie model</p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App\Models;
+
+            use Neoan\Model\Model;
+            use Neoan\Model\Collection;
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Attributes\HasMany;
+            use Neoan\Model\Traits\TimeStamps;
+
+            class Movie extends Model
+            {
+
+                #[IsPrimaryKey]
+                public int $id;
+
+                public string $name;
+
+                #[HasMany(Rating::class)]
+                public Collection $ratings;
+
+                use TimeStamps;
+            }
+
+        </code></pre>
+        <p>Rating model</p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App\Models;
+
+            use Neoan\Model\Model;
+            use Neoan\Model\Collection;
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Attributes\IsForeignKey;
+            use Neoan\Model\Traits\TimeStamps;
+
+            class Rating extends Model
+            {
+
+                #[IsPrimaryKey]
+                public int $id;
+
+                #[IsForeignKey('movie', 'id')]
+                public int $movieId;
+
+                public int $rating;
+
+                use TimeStamps;
+            }
+        </code></pre>
+        <p>
+            The result when retrieving movies now has ratings automatically attached.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            $movie = Movie::get(1);
+
+            // the property ratings is already a filled collection
+            $numberOfRatings = $movie->ratings->count();
+        </code></pre>
+        <p>
+            Be aware that automatically attaching large numbers of rows can lead to performance
+            issues. Since a model is just a class, you can always optimize by providing own methods:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+            class Movie extends Model
+            {
+                ...
+                public ratings(): Collection
+                {
+                    return Rating::retrieve(['movieId' => $this->id]);
+                }
+
+            }
+        </code></pre>
+        <p>And then use them accordingly:</p>
+        <pre class="normalize-code"><code class="language-php">
+            $movie = Movie::get(1);
+
+            // the property ratings is already a filled collection
+            $numberOfRatings = $movie->ratings()->count();
+        </code></pre>
+        <p>Have a look at <a href="/docs/models#magic">Magic methods</a> for how one-to-one relationships are automated for this.</p>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="pagination">Pagination</h2>
+        <p>
+            Pagination is a common task when dealing with lists and/or large numbers of expected results.
+            LENKRAD simplified this process.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            $page = 1;
+            $resultsPerPage = 25;
+            return User::paginate($page, $resultsPerPage)
+                // you can use the regular condition array to specify
+                ->where(['^deletedAt])
+                // newest users first? Let's get the last ids first
+                ->descending('id')
+                // when you're done specifying, execute
+                ->get();
+        </code></pre>
+        <p>
+            The response of a pagination call is standardized and returns the structure:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            [
+                'page' => 1,    // current page
+                'total' => 48,      // total hits
+                'pageSize' => 25,       // number of results per page
+                'pages' => 2,       // total number of resulting pages
+                'collection' => `{Collection}`      // result as Collection
+            ]
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="magic">Magic methods</h2>
+        <p>
+            LENKRAD avoids magic methods as we believe in empowering your IDE to do its job without having to
+            write comments like it's 2015. However, models DO have a __call-implementation and attributes can make use of it.
+            Out of the box, the attribute <em>IsForeignKey</em> uses it. Let's revive our movie class and add the property "director"
+            to see it in action:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App\Models;
+
+            use Neoan\Model\Model;
+            use Neoan\Model\Collection;
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Attributes\IsForeignKey;
+            use Neoan\Model\Attributes\HasMany;
+            use Neoan\Model\Traits\TimeStamps;
+
+            class Movie extends Model
+            {
+
+                #[IsPrimaryKey]
+                public int $id;
+
+                public string $name;
+
+                #[HasMany(Rating::class)]
+                public Collection $ratings;
+
+                // let's pretend we have a model "Director"
+                #[IsForeignKey('director','id', Director::class)]
+                public int $directorId;
+
+                use TimeStamps;
+
+                // Bonus: let's add a static helper after noticing we tend to
+                // always get movies by name, but for some reason programmatically
+                // (In reality one would likely notice that this is rarely necessary)
+                public static function byName( string $name): ?self
+                {
+                    return self::retrieveOne(['name' => $name]);
+                }
+            }
+        </code></pre>
+        <p>
+            In action:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            $movie = Movie::byName('Avatar');
+
+            // Of course we have the directorId available
+            $directorId = $movie->directorId;
+
+            // now let's get the associated director!
+            if($directorId === $movie->director()->id){
+                // as you have guessed, we now have the director available
+            }
+
+        </code></pre>
+        <blockquote>
+            As mentioned, your IDE will not suggest the availability of magic methods.
+            Refer to your IDE's guide on how to add magic methods to your suggestions (usually @method)
+        </blockquote>
     </div>
 </section>
