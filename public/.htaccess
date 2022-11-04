@@ -1,0 +1,23 @@
+# Options -Multiviews
+# Options +FollowSymLinks
+RewriteEngine On
+
+RewriteBase /
+
+
+# turn off www
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# force ssl
+#RewriteCond %{HTTPS} off
+#RewriteCond %{REQUEST_URI} !/img/
+#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Apache-fix: get Authorization header
+RewriteEngine On
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$  index.php/$1&%{QUERY_STRING}    [L,NC]

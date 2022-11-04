@@ -18,6 +18,6 @@ $app->invoke(new Loader());
 Event::on(GenericEvent::BEFORE_RENDERING, function($event) use($start){
     $uri = Request::getRequestUri();
     Store::write('currentRoute', $uri);
-    Store::write('delivered', number_format(microtime(true) - $start,2));
+    Store::write('delivered', number_format(microtime(true) - $start,3));
 });
 $app->run();
