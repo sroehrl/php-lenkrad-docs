@@ -33,7 +33,6 @@ function highlightCode(){
         let spaces = '';
         let finalString = '';
         const rows = element.innerHTML.split("\n");
-        console.log(rows)
         rows.forEach(row => {
             if(!found && row.trim().length>0){
                 found = true;
@@ -58,3 +57,40 @@ function highlightCode(){
 
 }
 setTimeout(highlightCode, 300)
+
+/* highlght text*/
+
+function highlightText(element, textToHighlight){
+    const reg = new RegExp('(>.*)' + textToHighlight + '([^<]*)', 'ig');
+
+    element.innerHTML = element.innerHTML.replace(reg, '$1<span class="bg-accent-dark">'+ textToHighlight + '</span>$2');
+}
+
+
+function alpineHighlightText(text, replacement){
+    const reg = new RegExp(replacement, 'ig');
+    return text.replace(reg, (match) => `<span class="bg-accent-dark">${match}</span>`)
+}
+
+/* query reader*/
+
+class UrlParser{
+    constructor() {
+        this.params = new URLSearchParams(window.location.search)
+    }
+    get(name) {
+        return this.params.get(name)
+    }
+}
+
+const url = new UrlParser();
+if(url.get('highlight')) {
+    highlightText(document.getElementById('layout-content'), url.get('highlight'))
+    const firstHit = document.evaluate('//*[text()="' + url.get('highlight') + '"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotItem(0);
+    if(firstHit){
+        setTimeout(()=>{
+            firstHit.scrollIntoView({behavior:"smooth", block: "center"})
+        }, 300)
+
+    }
+}

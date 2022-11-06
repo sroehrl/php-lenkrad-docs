@@ -2,10 +2,29 @@
     <h1>{{name}}</h1>
     <p>{{name}} introduction</p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
+        <a href="/docs/{{name.lower}}#ssr" class="button-contrast-light">About rendering</a>
+        <a href="/docs/{{name.lower}}#render" class="button-contrast-light">The Render class</a>
         <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="ssr">About rendering</h2>
+        <p>
+            It's important to understand how LENKRAD handles rendering in general. This page assumes that the default
+            Renderer is used. Please refer to <a href="/docs/response">Response</a> and <a href="/docs/routing#response">Custom response handling</a>
+            for possibilities to influence rendering.
+        </p>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
         <h2 id="class">The {{name}} class</h2>
+        <p>
+            LENKRAD ships with <a href="https://packagist.org/packages/neoan3-apps/template">neoan3-apps/template</a> as the default
+            templating mechanism. Documentation for the package is provided, so here we only provide a very basic example to get
+            you
+        </p>
+        <p>
+
+        </p>
+
     </div>
 </section>

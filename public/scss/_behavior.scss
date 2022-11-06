@@ -1,6 +1,10 @@
-$displays: ("block", "inline-block", "flex", "inline-flex");
+@import "mixins";
+$displays: ("block", "inline-block", "flex", "inline-flex", "none");
 
 @each $display in $displays {
+  @include mapBreakPoints("#{$display}"){
+    display: unquote($display) !important;
+  }
   .#{$display}{
     display: unquote($display);
   }
@@ -12,6 +16,9 @@ $positions: ("absolute", "sticky", "fixed", "relative");
   .#{$position}{
     position: unquote($position);
   }
+  @include mapBreakPoints("#{$position}"){
+    position: unquote($position);
+  }
 }
 $cursors: ("pointer");
 
@@ -20,6 +27,20 @@ $cursors: ("pointer");
     cursor: pointer;
   }
 
+}
+
+$overflows: ("auto", "scroll", "hidden");
+
+@each $overflow in $overflows{
+  .overflow-#{$overflow}{
+    overflow: unquote($overflow);
+  }
+  .overflow-x-#{$overflow}{
+    overflow-x: unquote($overflow);
+  }
+  .overflow-y-#{$overflow}{
+    overflow-y: unquote($overflow);
+  }
 }
 
 // scrollbar

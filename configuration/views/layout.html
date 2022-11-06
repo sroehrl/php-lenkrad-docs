@@ -23,15 +23,23 @@
     <!-- Custom styles -->
     <link rel="stylesheet" href="/style.css">
 </head>
-<body class="bg-neutral-dark flex" style="flex-direction: column; min-height: 100vh">
+<body class="bg-neutral-dark flex" style="flex-direction: column; min-height: 100vh" x-data="mainComponent">
 <header class="text-white p-4 border-t-5 border-secondary bg-contrast" >
     <a class="font-xl text-center block" href="/">
         LENKRAD - The modern PHP core
     </a>
-    <div class="text-center">{{name}}</div>
+    <div class="text-center" >
+        <label for="search" class="text-contrast absolute -top-20">Search docs</label>
+        <input x-on:input.debounce.500ms="search" x-model="query" id="search" type="text" class="border-accent bg-contrast-dark text-white border-l-2 border-t-0 border-r-0 border-b-0 pl-3 pt-1 pb-1" placeholder="Search...">
+    </div>
+    <div class="cursor-pointer lg:none" x-on:click="showMenu=!showMenu">
+        <svg style="width: 30px" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </div>
 </header>
-<div class="flex flex-1">
-    <div class="bg-neutral border-r-3 border-secondary" style="min-width: 230px" x-data="{isCurrent: (route) => route === '{{currentRoute}}'}">
+<div class="flex flex-1 overflow-x-hidden" style="max-width: 100%">
+
+    <div :class="{'none':!showMenu, 'block': showMenu}" class="bg-neutral border-r-3 border-b-2 border-secondary absolute lg:block lg:relative" style="min-width: 230px" x-data="{isCurrent: (route) => route === '{{currentRoute}}'}">
+
         <div class="font-lg p-3 bg-contrast-light">Basics</div>
         <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs') }">
             <a href="/docs">Getting Started</a>
@@ -78,8 +86,48 @@
             <a href="/docs/deploy">Deploy your app</a>
         </div>
     </div>
-    <main class="flex-1 p-5">
-        <div>{{main}}</div>
+    <main class="flex-1 p-5" style="max-width: 100%">
+        <template x-if="Object.keys(searchResults).length>0">
+            <div class="search-results absolute border-1 border-primary p-4 bg-contrast z-2 right-8 left-8">
+                <div class="relative">
+                    <div class="absolute right-3 top-1 cursor-pointer" x-on:click="query = ''; searchResults = {}">x</div>
+                </div>
+                <template x-for="topic in searchResults.topics">
+                    <a :href="topic.link" class="border-l-2 border-primary block pl-2">
+                        <h3 x-text="'Topic: ' + topic.headline"></h3>
+                        <p x-html="alpineHighlightText(topic.context, query)" ></p>
+                        <p class="font-md" x-text="topic.link"></p>
+                    </a>
+                </template>
+                <template x-for="topic in Object.keys(searchResults.sections)">
+                    <div class="border-l-2 border-primary block pl-2">
+                        <h3 x-text="'Topic: ' + topic" class="text-primary"></h3>
+                        <template x-for="section in searchResults.sections[topic]">
+                            <a :href="section.link" class="border-l-2 border-secondary block pl-2 ml-5">
+                                <h3 x-text="'Section: ' + section.headline"></h3>
+                                <p x-html="alpineHighlightText(section.context, query)"></p>
+                                <p class="font-md" x-text="section.link"></p>
+                            </a>
+                        </template>
+                    </div>
+
+                </template>
+                <div x-show="searchResults.text.length>0" class="mt-7 flex gap-2">
+                    <div class="border-accent flex-1 border-b mb-1"></div>
+                    <h3 class="m-0 text-accent">Context hits</h3>
+                    <div class="border-accent flex-1 border-b mb-1"></div>
+                </div>
+                <template x-for="section in searchResults.text">
+                    <a :href="section.link+'?highlight='+query" class="border-l-2 border-accent block pl-2">
+                        <h3 x-text="'Found in ' + section.link"></h3>
+                        <p x-html="alpineHighlightText(section.context, query)"></p>
+                        <p class="font-md" x-text="section.link"></p>
+                    </a>
+                </template>
+            </div>
+        </template>
+
+        <div id="layout-content">{{main}}</div>
         <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
             <h2>Before you move on</h2>
             <blockquote>
@@ -93,20 +141,47 @@
 
 </div>
 <footer class="mt-5 bg-neutral border-secondary-light border-t-2 p-4">
-    <div class="grid grid-cols-5">
+    <div class="grid md:grid-cols-5">
         <div class="copy">
             &copy; {{year}} neoan OPENSOURCE
         </div>
         <div class="span-x-3">
             This site is using <a href="https://github.com/sroehrl/lenkrad-web-starter#readme">lenkrad-web-starter</a>
         </div>
-        <div class="github place-start-end">
+        <div class="github md:place-start-end">
             <a href="https://github.com/sroehrl">Support me on Github</a>
         </div>
     </div>
 
 </footer>
+<script>
+    const mainComponent = {
+        showMenu:false,
+        query:'',
+        searchResults:{},
+        search(){
+            const reference = this;
+            if(this.query.trim().length < 2){
+                this.searchResults = {};
+                return;
+            }
+            fetch('/api/search?query='+this.query).then(j => j.json()).then(res => {
+                reference.searchResults.sections = {};
+                reference.searchResults.topics = res.topics;
+                reference.searchResults.text = res.text;
+                res.sections.forEach(section => {
+                    if(typeof reference.searchResults.sections[section.topic] === 'undefined'){
+                        reference.searchResults.sections[section.topic] = [];
+                    }
+                    reference.searchResults.sections[section.topic].push(section)
+                })
 
+            })
+
+        },
+
+    }
+</script>
 <script src="prism/prism.js"></script>
 <script src="//unpkg.com/alpinejs" defer></script>
 <script src="js/global.js"></script>
