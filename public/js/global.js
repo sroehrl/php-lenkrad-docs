@@ -21,7 +21,6 @@ document.querySelectorAll('.scroll-spy').forEach(element => {
 /* ====== Code normalisation ======= */
 window.Prism = window.Prism || {};
 function highlightCode(){
-    //<script src="assets/plugins/prism/prism.js"></script>
 
 
     document.querySelectorAll('[class^=language-]').forEach(element => {
@@ -46,6 +45,11 @@ function highlightCode(){
         codetag.className = element.dataset.class
         codetag.innerHTML = finalString.replace('<span class="token operator">?</span>php','<span class="token operator">&lt;?</span>php');
 
+        // strip html
+        if(element.dataset.class === 'strip-html'){
+            codetag.innerHTML = document.getElementById(element.dataset.id).innerHTML
+        }
+
         element.innerHTML = '';
         element.appendChild(codetag)
         Prism.highlightAll()
@@ -61,9 +65,9 @@ setTimeout(highlightCode, 300)
 /* highlght text*/
 
 function highlightText(element, textToHighlight){
-    const reg = new RegExp('(>.*)' + textToHighlight + '([^<]*)', 'ig');
+    const reg = new RegExp('(>[^<]*)(' + textToHighlight + ')([^<]*)', 'ig');
 
-    element.innerHTML = element.innerHTML.replace(reg, '$1<span class="bg-accent-dark">'+ textToHighlight + '</span>$2');
+    element.innerHTML = element.innerHTML.replace(reg, '$1<span class="bg-accent-dark">$2</span>$3');
 }
 
 

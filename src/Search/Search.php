@@ -22,7 +22,7 @@ class Search implements Routable
         return $this->search();
 
     }
-    private function search(): array
+    public function search(): array
     {
         $results = [
             'topics' => [],

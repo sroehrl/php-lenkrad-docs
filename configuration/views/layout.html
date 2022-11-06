@@ -26,11 +26,11 @@
 <body class="bg-neutral-dark flex" style="flex-direction: column; min-height: 100vh" x-data="mainComponent">
 <header class="text-white p-4 border-t-5 border-secondary bg-contrast" >
     <a class="font-xl text-center block" href="/">
-        LENKRAD - The modern PHP core
+        LENKRAD <span class="none md:inline-block">- The modern PHP core</span>
     </a>
-    <div class="text-center" >
+    <div class="text-center m-x-auto w-3/5">
         <label for="search" class="text-contrast absolute -top-20">Search docs</label>
-        <input x-on:input.debounce.500ms="search" x-model="query" id="search" type="text" class="border-accent bg-contrast-dark text-white border-l-2 border-t-0 border-r-0 border-b-0 pl-3 pt-1 pb-1" placeholder="Search...">
+        <input x-on:input.debounce.500ms="search" x-model="query" id="search" type="text" class="border-accent bg-contrast-dark text-white border-l-2 border-t-0 border-r-0 border-b-0 pl-3 pt-1 pb-1 w-full" placeholder="Search...">
     </div>
     <div class="cursor-pointer lg:none" x-on:click="showMenu=!showMenu">
         <svg style="width: 30px" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
