@@ -103,7 +103,7 @@
                     <div class="border-l-2 border-primary block pl-2">
                         <h3 x-text="'Topic: ' + topic" class="text-primary"></h3>
                         <template x-for="section in searchResults.sections[topic]">
-                            <a :href="section.link" class="border-l-2 border-secondary block pl-2 ml-5">
+                            <a :href="section.link" x-on:click="query = ''; searchResults = {}" class="border-l-2 border-secondary block pl-2 ml-5">
                                 <h3 x-text="'Section: ' + section.headline"></h3>
                                 <p x-html="alpineHighlightText(section.context, query)"></p>
                                 <p class="font-md" x-text="section.link"></p>

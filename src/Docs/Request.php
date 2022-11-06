@@ -12,6 +12,6 @@ class Request implements Routable
     public function __invoke(): array
     {
         Store::write('pageTitle', 'Request');
-        return ['name' => 'Request'];
+        return ['name' => 'Request', 'method' => \Neoan\Request\Request::getRequestMethod()];
     }
 }

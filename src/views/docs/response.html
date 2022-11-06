@@ -1,9 +1,23 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
 <!--    url /docs/response -->
     <h1>Response</h1>
-    <p>{{name}} introduction</p>
+    <h2>General flow</h2>
+    <div class="grid grid-cols-5 mb-5 gap-x-2">
+        <div class="bg-contrast p-2">Request</div>
+        <div class="border-neutral-light border-t-1  place-center-stretch relative">
+            <div class="absolute border-neutral-light border-t-1 border-r-1 p-1 right-0" style="transform: rotate(45deg); top: -0.4rem"></div>
+        </div>
+        <div class="bg-contrast p-2">Your logic</div>
+        <div class="border-neutral-light border-t-1 place-center-stretch relative">
+            <div class="absolute border-neutral-light border-t-1 border-r-1 p-1 right-0" style="transform: rotate(45deg); top: -0.4rem"></div>
+        </div>
+        <div class="bg-contrast p-2 border-accent border-r-2">Response</div>
+    </div>
+    <p>
+        In most scenarios, you won't interact with the Response class directly after your defaults have been set up.
+    </p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/response#class" class="button-contrast-light">The {{name}} class</a>
         <a href="/docs/{{name.lower}}#response-defaults" class="button-contrast-light">Setting defaults</a>
 
     </div>

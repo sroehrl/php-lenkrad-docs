@@ -94,7 +94,7 @@ if(url.get('highlight')) {
     if(firstHit){
         setTimeout(()=>{
             firstHit.scrollIntoView({behavior:"smooth", block: "center"})
-        }, 300)
+        }, 500)
 
     }
 }

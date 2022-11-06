@@ -6,7 +6,7 @@ use Neoan\Routing\Interfaces\Routable;
 use Neoan\Routing\Attributes\Web;
 use Neoan\Store\Store;
 
-#[Web('/docs/cli', '/docs/clitool.html')]
+#[Web('/docs/cli', '/docs/in-development.html')]
 class CLITool implements Routable
 {
     public function __invoke(): array

@@ -1,11 +1,11 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
 <!--    url: /docs/templating -->
-    <h1>Templating</h1>
-    <p>{{name}} introduction</p>
+    <h1>Templating & Rendering</h1>
+    <p>Rendering & templating in LENKRAD - the basics</p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#ssr" class="button-contrast-light">About rendering</a>
-        <a href="/docs/{{name.lower}}#render" class="button-contrast-light">The Render class</a>
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/templating#ssr" class="button-contrast-light">About rendering</a>
+        <a href="/docs/templating#render" class="button-contrast-light">The Render class</a>
+        <a href="/docs/templating#class" class="button-contrast-light">The Templating class</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
@@ -16,6 +16,106 @@
             for possibilities to influence rendering.
         </p>
     </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="render">The Render class</h2>
+        <p>
+            The Renderer class has the following static methods:
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>setTemplatePath(string $path)</p>
+            <p>Sets the entry level of template-arguments</p>
+            <p>getInstance(Renderer $mockInstance = null)</p>
+            <p>Returns an existing instance if present, creates a new instance if initial or overrides the used instance with a mock instance (testing)</p>
+            <p>setHtmlSkeleton(string $skeletonPath, string $placement = 'main', array $skeletonVariables = [])</p>
+            <p>See example below</p>
+            <p>render(array | DataNormalization $data, $view)</p>
+            <p>Manually triggers rendering (used automatically on last procedural chain, you likely will never need it)</p>
+            <p>detachInstance()</p>
+            <p>Resets internal singleton to null</p>
+            <p>getTemplatePath()</p>
+            <p>Returns string with set template path</p>
+            <p>getHtmlSkeletonPath()</p>
+            <p>Returns string of set skeleton path</p>
+            <p>getHtmlComponentPlacement()</p>
+            <p>Returns string of set component placement</p>
+        </div>
+        <p>
+            The default rendering class can either be used with individually rendered HTML files or using a surrounding layout
+            where route-specific content is placed in a predefined container. Here, we assume the latter, also referred to as skeleton setup.
+        </p>
+        <h3 id="#skeleton-structure">Skeleton structure</h3>
+        <div class="m-t-5 m-b-5 border-neutral-light border-1 p-4 relative">
+            <p class="font-md absolute -top-5 bg-neutral pl-2 pr-2">/src/views/skeleton.html</p>
+            <p>This file contains the "frame"-html. Maybe header, menus, footer, etc.</p>
+            <div class="m-t-5 m-b-5 border-primary-dark border-1 p-4 relative">
+                <p class="font-md absolute -top-5 bg-neutral pl-2 pr-2">Respective component/route HTML</p>
+                <p>The render class places the route's defined HTML at a specified location (defaults to "main")</p>
+            </div>
+
+        </div>
+        <p>The method <em>setHtmlSkeleton</em> is best explained by example.</p>
+        <h3>Example</h3>
+        <p>1. /src/views/skeleton.html (regarding the curly bracket markup, see <a href="/docs/templating#class">the Template class</a>)</p>
+        <pre class="normalize-code" ><code class="language-html" data-class="strip-html" data-id="skeleton"></code></pre>
+        <p>2. /src/Home/Home.php</p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+            namespace App\Home;
+
+            use Neoan\Routing\Interfaces\Routable;
+
+            class Home implements Routable
+            {
+                public function __invoke(): array
+                {
+                    return ['fromHome' => 'Hello there, Obi Wan Kenobi']
+                }
+            }
+        </code></pre>
+        <p>3. /src/Home/view.html</p>
+        <pre class="normalize-code" ><code class="language-html" data-class="strip-html" data-id="view"></code></pre>
+        <p>/public/index.php</p>
+        <pre class="normalize-code"><code class="language-php">
+        use Neoan\NeoanApp;
+        use Neoan\Routing\Route;
+        use Neoan\Render\Renderer;
+        use Neoan\Enums\ResponseOutput;
+        use Neoan\Response\Response;
+        use App\Home\Home;
+
+        $projectPath = dirname(__DIR__);
+        require_once $projectPath . '/vendor/autoload.php';
+
+        $pathToSourceFiles = $projectPath . '/src';
+        $publicPath = __DIR__;
+
+        $app = new NeoanApp($pathToSourceFiles, $publicPath);
+
+        // to simplify our life, let's set this app to default to SSR ...
+        Response::setDefaultOutput(ResponseOutput::HTML);
+        // ... and set a default entry path for our views
+        Renderer::setTemplatePath('src/');
+
+        // Let's set up our skeleton
+        Renderer::setHtmlSkeleton(
+            'src/views/skeleton.html', // our skeleton HTML
+            'main',     // our component placement
+            [
+                'year' => '2022',
+                'title' => 'My App'
+            ]           // lastly, we can set default variables used in our skeleton
+        );
+
+        // register a test route
+        Route::get('/', Home::class)->view('Home/view.html');
+
+        // run application
+        $app->run();
+    </code></pre>
+    </div>
+
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
         <h2 id="class">The Template class</h2>
         <p>
@@ -80,5 +180,24 @@
         &lt;td&gt;&#123;&#123;result.headline}}&lt;/td&gt;
     &lt;/tr&gt;
 &lt;/table&gt;
+    </script>
+    <script type="text/html" id="skeleton">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;&#123;&#123;title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class="p-3"&gt;
+    &#123;&#123;main}}
+&lt;/div&gt;
+&lt;footer&gt;&copy; &#123;&#123;year}}&lt;/footer&gt;
+&lt;/body&gt;
+    </script>
+    <script type="text/html" id="view">
+&lt;div class="bg-warning"&gt;
+    &#123;&#123;fromHome}}
+&lt;/div&gt;
     </script>
 </section>

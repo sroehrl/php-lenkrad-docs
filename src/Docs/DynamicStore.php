@@ -6,7 +6,7 @@ use Neoan\Routing\Interfaces\Routable;
 use Neoan\Routing\Attributes\Web;
 use Neoan\Store\Store;
 
-#[Web('/docs/dynamic-store', '/docs/dynamicstore.html')]
+#[Web('/docs/dynamic-store', '/docs/in-development.html')]
 class DynamicStore implements Routable
 {
     public function __invoke(): array

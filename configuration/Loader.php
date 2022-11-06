@@ -18,7 +18,7 @@ class Loader
     {
         $app->invoke(new AttributeRouting('App'));
         $this->templating($app);
-        $this->database();
+//        $this->database();
         return $this;
     }
     private function templating(NeoanApp $app): void

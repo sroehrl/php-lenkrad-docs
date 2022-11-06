@@ -1,12 +1,111 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
 <!--    url: /docs/request -->
     <h1>Request</h1>
-    <p>{{name}} introduction</p>
+    <h2>General flow</h2>
+    <div class="grid grid-cols-5 mb-5 gap-x-2">
+        <div class="bg-contrast p-2 border-accent border-r-2">Request</div>
+        <div class="border-neutral-light border-t-1  place-center-stretch relative">
+            <div class="absolute border-neutral-light border-t-1 border-r-1 p-1 right-0" style="transform: rotate(45deg); top: -0.4rem"></div>
+        </div>
+        <div class="bg-contrast p-2">Your logic</div>
+        <div class="border-neutral-light border-t-1 place-center-stretch relative">
+            <div class="absolute border-neutral-light border-t-1 border-r-1 p-1 right-0" style="transform: rotate(45deg); top: -0.4rem"></div>
+        </div>
+        <div class="bg-contrast p-2">Response</div>
+    </div>
+    <p>Where it all begins...</p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/request#class" class="button-contrast-light">The Request class</a>
+        <a href="/docs/request#request-test" class="button-contrast-light">Request Unit Testing</a>
+        <a href="/docs/request#usage" class="button-contrast-light">Using Request</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="class">The Request class</h2>
+        <p>
+            As reacting on requests is likely the most common prerequisite to your programmatic logic, LENKRAD has made
+            handling requests as easy as possible. Let's first look at the static public methods:
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>Request::getQueries()</p>
+            <p>Returns assoc array of query parameters</p>
+            <p>Request::getQuery(string $name)</p>
+            <p>Return the value of the specified query parameter, or null</p>
+            <p>Request::getRequestMethod()</p>
+            <p>Returns a Neoan\Enums\RequestMethod case</p>
+            <p>Request::getRequestUri()</p>
+            <p>Returns a string containing the request-uri</p>
+            <p>Request::getInputs()</p>
+            <p>Returns client-payload, regardless of method</p>
+            <p>Request::getInput(string $name)</p>
+            <p>Returns the value of the specified input, or null</p>
+            <p>Request::getParameters()</p>
+            <p>Returns assoc array of route-specific parameters (see <a href="/docs/routing#parameter">Route parameter</a>)</p>
+            <p>Request::getParameter(string $name)</p>
+            <p>Returns the value of the specified parameter, or null</p>
+            <p>Request::getInstance(Request $mockInstance = null)</p>
+            <p>Return the current instance of the Request facade. (e.g. to mock & test)</p>
+        </div>
+        <p>Additionally, some useful properties are public:</p>
+        <code class="language-php block">$request = Request::getInstance();</code>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="border-b-2 border-primary font-lg">Property</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>$request->requestHeaders</p>
+            <p>Array containing all collected headers</p>
+            <p>$request->files</p>
+            <p>Array containing all files submitted via form-data</p>
+            <p>$request->webPath</p>
+            <p>Returns string of actual webPath before any sanitation and parsing</p>
+        </div>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="request-test">Request Unit Testing</h2>
+        <p>
+            To ease testing of your application code, you can set/override values at runtime.
+            This is true for all public properties. Additionally, the following setters work statically:
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>Request::setParameters(array $parameters)</p>
+            <p>Expects assoc array</p>
+            <p>Request::setQueries(array $queryParameters)</p>
+            <p>Expects assoc array</p>
+            <p>Request::detachInstance()</p>
+            <p>Resets the singleton to null. (NOTE: you likely want to run getInstance() with a mock-instance after that to generate a new instance)</p>
+        </div>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="usage">Using Request</h2>
+        <p>
+            You <em>must not</em> inject the Request into your controllers. Instead, the static methods can be used
+            after app-instantiation anywhere in your code.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+            use Neoan\Request\Request;
+
+            class RandomClass extends Routable
+            {
+                public function __invoke(MyValidationClass $validation)
+                {
+                    [
+                        'terms-accepted' => $accepted,
+                        'email' => $requesterEmail
+                    ] = Request::getInputs();
+
+                    if(!$accepted || !$validation->isValidEmail($requesterEmail)){
+                        $this->doSomething();
+                    }
+
+                    $this->addToNewsletter($requesterEmail);
+                    Response::redirect('/dashboard')
+                }
+                ...
+            }
+        </code></pre>
     </div>
 </section>
