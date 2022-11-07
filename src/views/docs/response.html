@@ -17,14 +17,102 @@
         In most scenarios, you won't interact with the Response class directly after your defaults have been set up.
     </p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/response#class" class="button-contrast-light">The {{name}} class</a>
-        <a href="/docs/{{name.lower}}#response-defaults" class="button-contrast-light">Setting defaults</a>
+        <a href="/docs/response#class" class="button-contrast-light">The Response class</a>
+        <a href="/docs/response#response-defaults" class="button-contrast-light">Setting defaults</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="class">The Response class</h2>
+        <p>
+            The Response class is used by internal processes to handle the http-answer. When the last class implementing Routable in your logic chain
+            returns, the Route class automatically passes the accumulated results to the output defined in the current
+            <a href="/docs/routing">route</a> or based on
+            <a href="/docs/response#response-defaults">your settings</a>. Like any other part of LENKRAD, the process is fully exposed to you.
+            The Response class offers the following static methods:
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>setDefaultOutput(ResponseOutput $output)</p>
+            <p>Takes a Neoan\Enums\ResponseOutput case. The default is ResponseOutput::JSON</p>
+            <p>output($data, array $renderOptions)</p>
+            <p>Manually triggers immediate output with given specifications</p>
+            <p>getDefaultOutput()</p>
+            <p>Returns default Neoan\Enums\ResponseOutput case</p>
+            <p>setDefaultRenderer(string $renderer)</p>
+            <p>
+                Expects classname of class implementing Neoan\Render\RenderEngine.
+                (You can set alternative Renderers at a route-level as well)
+            </p>
+            <p>json(Serializable $data)</p>
+            <p>
+                Serializes provided data to json and responds immediately (with corresponding header).
+                Method gets called internally if defaultOutput is set to ResponseOutput::JSON
+            </p>
+            <p>
+                html(mixed $data, ?string $view)
+            </p>
+            <p>
+                Normalizes $data (DataNormalization instance), applies it to provided view and immediately
+                responds with output. Method gets called internally if defaultOutput is set to ResponseOutput::HTML
+            </p>
+            <p>
+                setStatuscode(int $httpResponseCode)
+            </p>
+            <p>
+                Sets response code in response header.
+            </p>
+            <p>
+                redirect(string $whereTo)
+            </p>
+            <p>
+                Redirects to specified location and stops execution.
+            </p>
+            <p>
+                getInstance(?ResponseInterface = null)
+            </p>
+            <p>Returns Response instance. A mock response can be passed in (for testing)</p>
+            <p>detachInstance()</p>
+            <p>Resets singleton instance.</p>
+        </div>
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
         <h2 id="response-defaults">Setting defaults</h2>
+        <p>
+            If you are <a href="/docs/routing#attribute">routing by attributes</a>, there are no
+            default settings you need to worry about regarding the response. If you define your routes classically,
+            you might want to simplify your route definitions by setting a default for the most common case of route.
+
+        </p>
+        <h3>Server Side Rendered Application</h3>
+        <p>If your routes tend to be rendered pages, consider </p>
+        <pre class="normalize-code"><code class="language-php">
+            use Neoan\Response\Response;
+            use Neoan\Enums\ResponseOutput;
+
+            Response::setDefaultOutput(ResponseOutput::HTML)
+        </code></pre>
+        <h3>JSON API</h3>
+        <p>If you are building a pure backend, consider</p>
+        <pre class="normalize-code"><code class="language-php">
+            use Neoan\Response\Response;
+            use Neoan\Enums\ResponseOutput;
+
+            Response::setDefaultOutput(ResponseOutput::JSON);
+        </code></pre>
+        <blockquote>
+            You can always overwrite the response-type on the route level.
+        </blockquote>
+        <h3>Programmatic example</h3>
+        <pre class="normalize-code"><code class="language-php">
+            use Neoan\Response\Response;
+            use Neoan\Request\Request;
+            use Neoan\Enums\ResponseOutput;
+
+            // In a monolith, we might have api-routes and web-routes
+            $isApi = str_starts_with(Request::getRequestUri(), '/api/');
+
+            Response::setDefaultOutput($isApi ? ResponseOutput::JSON : ResponseOutput::HTML);
+        </code></pre>
     </div>
 </section>
