@@ -3,10 +3,40 @@
     <h1>CLI Basics</h1>
     <p>Basic CLI commands</p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-primary">The {{name}} class</a>
+        <a href="/docs/cli-basics/#basics" class="button-primary">Basic CLI commands</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="basics">Basic CLI commands</h2>
+        <p>
+            The cli is a powerful helper for your fast-paced reality.
+            If you have a setup similar as described in <a href="/quick-start#cli">quick-start</a>,
+            you should have a working cli execution via <code class="language-shell">php cli</code>.
+            The tool is extendable and customizable, so here we are going to focus on an introduction of the most useful and common commands:
+        </p>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="border-b-2 border-primary font-lg span-x-2">Command</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p class="span-x-2">list</p>
+            <p>Lists all available and registered commands</p>
+            <p class="span-x-2">create:model {FullyQualifiedNameSpace}</p>
+            <p>Creates a model in the specified namespace</p>
+            <p class="span-x-2">create:controller {FullyQualifiedNameSpace}</p>
+            <p>Creates a routable in the specified namespace</p>
+            <p class="span-x-2">migrate:model {mysql | sqlite} {FullyQualifiedNameSpace} [-o {output-folder}] [--with-copy]</p>
+            <p>Migrates a model towards the database. Additionally, a dump (copy) and a migration file (if output folder is set) can be generated</p>
+            <p class="span-x-2">migrate:models {mysql | sqlite} {NameSpaceToExplore} [-o {output-folder}] [--with-copy]</p>
+            <p>Same as above, but the plural indicates that every model within the specified namespace gets migrated.</p>
+        </div>
+        <h3>Example (assuming MySql setup)</h3>
+        <ol>
+            <li><code class="language-shell">php create:model App\Models\Comment</code></li>
+            <li>Specify properties in generated file as described in <a href="/docs/models">Models</a></li>
+            <li><code class="language-shell">php migrate:model mysql App\Models\Comment</code></li>
+        </ol>
+        <blockquote>
+            Unlike other frameworks, LENKRAD doesn't require separate migration files. If edge-cases create ambiguities (for example when renaming existing properties),
+            data is always left intact and a copy of the previous structure can be consulted.
+        </blockquote>
     </div>
 </section>
