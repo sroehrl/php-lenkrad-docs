@@ -1,5 +1,5 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
-<!--    url: /docs/templating -->
+    <!--    url: /docs/templating -->
     <h1>Templating & Rendering</h1>
     <p>Rendering & templating in LENKRAD - the basics</p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
@@ -12,7 +12,8 @@
         <h2 id="ssr">About rendering</h2>
         <p>
             It's important to understand how LENKRAD handles rendering in general. This page assumes that the default
-            Renderer is used. Please refer to <a href="/docs/response">Response</a> and <a href="/docs/routing#response">Custom response handling</a>
+            Renderer is used. Please refer to <a href="/docs/response">Response</a> and <a
+                href="/docs/routing#response">Custom response handling</a>
             for possibilities to influence rendering.
         </p>
     </div>
@@ -27,11 +28,13 @@
             <p>setTemplatePath(string $path)</p>
             <p>Sets the entry level of template-arguments</p>
             <p>getInstance(Renderer $mockInstance = null)</p>
-            <p>Returns an existing instance if present, creates a new instance if initial or overrides the used instance with a mock instance (testing)</p>
+            <p>Returns an existing instance if present, creates a new instance if initial or overrides the used instance
+                with a mock instance (testing)</p>
             <p>setHtmlSkeleton(string $skeletonPath, string $placement = 'main', array $skeletonVariables = [])</p>
             <p>See example below</p>
             <p>render(array | DataNormalization $data, $view)</p>
-            <p>Manually triggers rendering (used automatically on last procedural chain, you likely will never need it)</p>
+            <p>Manually triggers rendering (used automatically on last procedural chain, you likely will never need
+                it)</p>
             <p>detachInstance()</p>
             <p>Resets internal singleton to null</p>
             <p>getTemplatePath()</p>
@@ -42,8 +45,10 @@
             <p>Returns string of set component placement</p>
         </div>
         <p>
-            The default rendering class can either be used with individually rendered HTML files or using a surrounding layout
-            where route-specific content is placed in a predefined container. Here, we assume the latter, also referred to as skeleton setup.
+            The default rendering class can either be used with individually rendered HTML files or using a surrounding
+            layout
+            where route-specific content is placed in a predefined container. Here, we assume the latter, also referred
+            to as skeleton setup.
         </p>
         <h3 id="#skeleton-structure">Skeleton structure</h3>
         <div class="m-t-5 m-b-5 border-neutral-light border-1 p-4 relative">
@@ -57,8 +62,9 @@
         </div>
         <p>The method <em>setHtmlSkeleton</em> is best explained by example.</p>
         <h3>Example</h3>
-        <p>1. /src/views/skeleton.html (regarding the curly bracket markup, see <a href="/docs/templating#class">the Template class</a>)</p>
-        <pre class="normalize-code" ><code class="language-html" data-class="strip-html" data-id="skeleton"></code></pre>
+        <p>1. /src/views/skeleton.html (regarding the curly bracket markup, see <a href="/docs/templating#class">the
+            Template class</a>)</p>
+        <pre class="normalize-code"><code class="language-html" data-class="strip-html" data-id="skeleton"></code></pre>
         <p>2. /src/Home/Home.php</p>
         <pre class="normalize-code"><code class="language-php">
             ?php
@@ -75,8 +81,8 @@
             }
         </code></pre>
         <p>3. /src/Home/view.html</p>
-        <pre class="normalize-code" ><code class="language-html" data-class="strip-html" data-id="view"></code></pre>
-        <p>/public/index.php</p>
+        <pre class="normalize-code"><code class="language-html" data-class="strip-html" data-id="view"></code></pre>
+        <p>4. /public/index.php</p>
         <pre class="normalize-code"><code class="language-php">
         use Neoan\NeoanApp;
         use Neoan\Routing\Route;
@@ -113,14 +119,21 @@
 
         // run application
         $app->run();
-    </code></pre>
+        </code></pre>
+        <blockquote>
+            We're lumping everything in the index file to show everything at one glance.
+            Feel free to have a look at our starter projects to get suggestions of how to structure your
+            real-life project.
+        </blockquote>
     </div>
 
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
         <h2 id="class">The Template class</h2>
         <p>
-            LENKRAD ships with <a href="https://packagist.org/packages/neoan3-apps/template">neoan3-apps/template</a> as the default
-            templating mechanism. Documentation for the package is provided, so here we only provide a very basic example to get
+            LENKRAD ships with <a href="https://packagist.org/packages/neoan3-apps/template">neoan3-apps/template</a> as
+            the default
+            templating mechanism. Documentation for the package is provided, so here we only provide a very basic
+            example to get
             you started.
         </p>
         <h3>e.g. in /src/MyRoute/MyRoute.php</h3>
@@ -143,8 +156,8 @@
             }
         </code></pre>
         <h3>e.g. in /src/MyRoute/view.html</h3>
-        <pre class="normalize-code" ><code class="language-html" data-class="strip-html"
-                                           data-id="one">
+        <pre class="normalize-code"><code class="language-html" data-class="strip-html"
+                                          data-id="one">
 
         </code></pre>
 
@@ -167,37 +180,37 @@
 
     </div>
     <script type="text/html" id="one">
-&lt;section&gt;
-    &lt;!-- n-if: element removed if not true --&gt;
-    &lt;!-- NOTE: can only have one child (element or text-node) --&gt;
-    &lt;h1 n-if="boolean"&gt;&#123;&#123;today}}&lt;/h1&gt;
-&lt;/section&gt;
-&lt;table&gt;
-    &lt;!-- n-for: iterates similar to foreach --&gt;
-    &lt;tr n-for="results as result"&gt;
+        &lt;section&gt;
+        &lt;!-- n-if: element removed if not true --&gt;
+        &lt;!-- NOTE: can only have one child (element or text-node) --&gt;
+        &lt;h1 n-if="boolean"&gt;&#123;&#123;today}}&lt;/h1&gt;
+        &lt;/section&gt;
+        &lt;table&gt;
+        &lt;!-- n-for: iterates similar to foreach --&gt;
+        &lt;tr n-for="results as result"&gt;
         &lt;!-- substitutions work in attributes as well --&gt;
         &lt;td&gt;&lt;a href="&#123;&#123;result.link}}"&gt;&#123;&#123;result.link}}&lt;/a&gt;&lt;/td&gt;
         &lt;td&gt;&#123;&#123;result.headline}}&lt;/td&gt;
-    &lt;/tr&gt;
-&lt;/table&gt;
+        &lt;/tr&gt;
+        &lt;/table&gt;
     </script>
     <script type="text/html" id="skeleton">
-&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;title&gt;&#123;&#123;title}}&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div class="p-3"&gt;
-    &#123;&#123;main}}
-&lt;/div&gt;
-&lt;footer&gt;&copy; &#123;&#123;year}}&lt;/footer&gt;
-&lt;/body&gt;
+        &lt;!DOCTYPE html&gt;
+        &lt;html lang="en"&gt;
+        &lt;head&gt;
+        &lt;meta charset="UTF-8"&gt;
+        &lt;title&gt;&#123;&#123;title}}&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        &lt;div class="p-3"&gt;
+        &#123;&#123;main}}
+        &lt;/div&gt;
+        &lt;footer&gt;&copy; &#123;&#123;year}}&lt;/footer&gt;
+        &lt;/body&gt;
     </script>
     <script type="text/html" id="view">
-&lt;div class="bg-warning"&gt;
-    &#123;&#123;fromHome}}
-&lt;/div&gt;
+        &lt;div class="bg-warning"&gt;
+        &#123;&#123;fromHome}}
+        &lt;/div&gt;
     </script>
 </section>
