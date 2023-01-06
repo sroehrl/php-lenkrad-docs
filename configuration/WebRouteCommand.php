@@ -13,8 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('create:webroute', 'Starter: Creates file implementing Routable')]
 class WebRouteCommand extends Command
 {
-    protected static $defaultName = 'create:controller';
-    protected static $defaultDescription = 'create controller command';
+
     private NeoanApp $neoanApp;
 
     public function __construct(NeoanApp $neoanApp, string $name = null)

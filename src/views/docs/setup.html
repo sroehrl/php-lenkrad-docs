@@ -1,0 +1,104 @@
+<div>
+    <div version="<0.2" class="bg-warning p-2 border-danger border-l-4 relative">
+        <p>
+            This topic isn't implemented in your version of LENKRAD.
+        </p>
+    </div>
+    <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
+        <!-- url: /docs/setup -->
+        <h1>Setup</h1>
+
+        <p>Unifying common setup necessities</p>
+        <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
+            <a href="/docs/{{name.lower}}#class" class="button-primary">The Setup class</a>
+
+        </div>
+        <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+            <h2 id="class">The Setup class</h2>
+            <p>
+                Starting from version v0.2, the app requires an instance of the setup-helper.
+                This simplifies the setup process greatly.
+            </p>
+            <h3>Main methods</h3>
+            <div class="grid grid-cols-3 gap-3 w-full overflow-x-auto overflow-x-auto">
+                <div class="border-b-2 border-primary font-lg">Method</div>
+                <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+                <p>set(string $key, mixed $value)</p>
+                <p class="span-x-2">Registers a value available throughout the app</p>
+                <p>get(string $key)</p>
+                <p class="span-x-2">Retrieves a value</p>
+                <p>getConfiguration()</p>
+                <p class="span-x-2">Retrieves an array of all setup values</p>
+                <p>setPublicPath(string $path)</p>
+                <p class="span-x-2">Registers web-path</p>
+                <p>setLibraryPath(string $path)</p>
+                <p class="span-x-2">Registers source-path</p>
+                <p>setDatabaseAdapter(Adapter $adapter)</p>
+                <p class="span-x-2">Accepts instantiated Database adapter</p>
+                <p>setSkeletonVariables(array $skeletonVariables)</p>
+                <p class="span-x-2">See <a href="/docs/templating?highlight=skeletonVariables">templating (variables)</a></p>
+                <p>setSkeletonComponentPlacement(string $skeletonComponentPlacement)</p>
+                <p class="span-x-2">See <a href="/docs/templating?highlight=placement">templating (placement)</a></p>
+                <p>setSkeletonHTML(string $skeletonHTML)</p>
+                <p class="span-x-2">See <a href="/docs/templating?highlight=skeletonPath">templating (skeleton)</a></p>
+
+                <p>setUseSkeleton(bool $useSkeleton)</p>
+                <p class="span-x-2">Set true for use of layout/frame mode</p>
+                <p>setDefault404(string $default404)</p>
+                <p class="span-x-2">Set own 404 page html</p>
+                <p>setDefault500(string $default500)</p>
+                <p class="span-x-2">Set own system error page html</p>
+                <p>setTemplatePath(string $templatePath)</p>
+                <p class="span-x-2">Set relative base path for templating</p>
+            </div>
+            <h3>Example with custom value</h3>
+            <p>index.php</p>
+            <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            // /public/index.php
+
+            use Neoan\NeoanApp;
+            use Neoan\Routing\Route;
+            use Neoan\Helper\Setup;
+
+            $projectPath = dirname(__DIR__);
+            require_once $projectPath . '/vendor/autoload.php';
+
+            $pathToSourceFiles = $projectPath . '/src';
+            $publicPath = __DIR__;
+
+            $setup = new Setup();
+            $setup->setLibraryPath($pathToSourceFiles)
+                  ->setPublicPath($publicPath)
+                  // some arbitrary setup value
+                  ->set('globalArray', ['a']);
+
+            $app = new NeoanApp($setup);
+
+            ...
+
+            // run application
+            $app->run();
+        </code></pre>
+            <p>Some controller</p>
+            <pre class="normalize-code"><code class="language-php">
+            ?php
+            namespace App;
+
+            use Neoan\Routing\Interfaces\Routable;
+            use Neoan\Helper\Setup;
+
+            class Controller implements Routable
+            {
+                // auto-wire our setup instance
+                public function __invoke(Setup $setup): array
+                {
+                    // let's return our globalArray
+                    return $setup->get('globalArray');
+                }
+            }
+        </code></pre>
+        </div>
+    </section>
+</div>

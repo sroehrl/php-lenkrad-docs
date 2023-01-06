@@ -31,6 +31,7 @@
 
                 use Neoan\NeoanApp;
                 use Neoan\Routing\Route;
+                use Neoan\Helper\Setup;
 
                 $projectPath = dirname(__DIR__);
                 require_once $projectPath . '/vendor/autoload.php';
@@ -38,7 +39,11 @@
                 $pathToSourceFiles = $projectPath . '/src';
                 $publicPath = __DIR__;
 
-                $app = new NeoanApp($pathToSourceFiles, $publicPath);
+                $setup = new Setup();
+                $setup->setLibraryPath($pathToSourceFiles)
+                      ->setPublicPath($publicPath);
+
+                $app = new NeoanApp($setup);
 
                 // register a test route
                 Route::get('/')->inject([
@@ -101,16 +106,18 @@
 
                 use Neoan\Cli\Application;
                 use Neoan\NeoanApp;
+                use Neoan\Helper\Setup;
 
                 $projectPath = __DIR__;
                 require_once $projectPath . '/vendor/autoload.php';
 
-                $pathToSourceFiles = $projectPath . '/src';
-                $publicPath = $projectPath . '/public';
+                $setup = (new Setup())
+                            ->setLibraryPath($projectPath . '/src')
+                            ->setPublicPath($projectPath . '/public');
 
-                // Note that we add a third parameter here, the CLI-path
+                // Note that we add a second parameter here, the CLI-path
                 // In our case, it's the same as the project path
-                $app = new NeoanApp($pathToSourceFiles, $publicPath, $projectPath);
+                $app = new NeoanApp($setup, $projectPath);
 
                 // Now let's pass the initialized app into our console application
                 $console = new Application($app);

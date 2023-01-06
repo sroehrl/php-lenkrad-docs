@@ -4,7 +4,8 @@
   "type": "project",
   "license": "MIT",
   "require": {
-    "neoan.io/core": "dev-master"
+    "neoan.io/core": "dev-master",
+    "ext-dom": "*"
   },
   "autoload": {
     "psr-4": {

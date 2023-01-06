@@ -28,10 +28,21 @@
     <a class="font-xl text-center block" href="/">
         LENKRAD <span class="none md:inline-block">- The modern PHP core</span>
     </a>
-    <div class="text-center m-x-auto w-3/5">
-        <label for="search" class="text-contrast absolute -top-20">Search docs</label>
-        <input x-on:input.debounce.500ms="search" x-model="query" id="search" type="text" class="border-accent bg-contrast-dark text-white border-l-2 border-t-0 border-r-0 border-b-0 pl-3 pt-1 pb-1 w-full" placeholder="Search...">
+    <div class="grid grid-cols-5 gap-3">
+        <div >
+            <select x-on:change="changeVersion" x-model="version" class="bg-gray-50 border-l-2 border-t-0 border-r-0 border-b-0 pl-2 pr-2 pt-1 pb-1 text-white rounded bg-contrast-dark">
+                <option value="0.1">v0.1.x</option>
+                <option value="0.2">v0.2.x</option>
+            </select>
+        </div>
+        <div class="span-x-3 ">
+            <label for="search" class="text-contrast absolute -top-20">Search docs</label>
+            <input x-on:input.debounce.500ms="search" x-model="query" id="search" type="text" class="border-accent bg-contrast-dark text-white border-l-2 border-t-0 border-r-0 border-b-0 pl-3 pt-1 pb-1 w-full" placeholder="Search...">
+        </div>
     </div>
+
+
+
     <div class="cursor-pointer lg:none" x-on:click="showMenu=!showMenu">
         <svg style="width: 30px" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
     </div>
@@ -44,6 +55,17 @@
         <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs') }">
             <a href="/docs">Getting Started</a>
         </div>
+        <div>
+            <div version=">0.1" class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs/setup') }">
+                <a href="/docs/setup">Setup</a>
+            </div>
+        </div>
+        <div>
+            <div version=">0.1" class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs/cors') }">
+                <a href="/docs/cors">CORS</a>
+            </div>
+        </div>
+
         <div class="pl-3 pt-2 pb-1" :class="{'border-l-3 border-primary': isCurrent('/docs/routing') }">
             <a href="/docs/routing" >Routing</a>
         </div>
@@ -87,11 +109,19 @@
         </div>
     </div>
     <main class="flex-1 p-5" style="max-width: 100%">
+
         <template x-if="Object.keys(searchResults).length>0">
             <div class="search-results absolute border-1 border-primary p-4 bg-contrast z-2 right-8 left-8">
                 <div class="relative">
                     <div class="absolute right-3 top-1 cursor-pointer" x-on:click="query = ''; searchResults = {}">x</div>
                 </div>
+                <template x-if="searchResults.sections.length<1&&searchResults.text.length<1&&searchResults.topics.length<1">
+                    <div class="p-1">
+                        <p class="font-lg">
+                            No results for "<span class="text-primary" x-text="query"></span>" <br>
+                        </p>
+                    </div>
+                </template>
                 <template x-for="topic in searchResults.topics">
                     <a :href="topic.link" class="border-l-2 border-primary block pl-2">
                         <h3 x-text="'Topic: ' + topic.headline"></h3>
@@ -157,6 +187,10 @@
 <script>
     const mainComponent = {
         showMenu:false,
+        version: '{{version}}',
+        changeVersion(){
+            fetch('/api/version?v=' + this.version).then(()=> window.location.reload())
+        },
         query:'',
         searchResults:{},
         search(){
@@ -166,7 +200,8 @@
                 return;
             }
             fetch('/api/search?query='+this.query).then(j => j.json()).then(res => {
-                reference.searchResults.sections = {};
+
+                reference.searchResults.sections = [];
                 reference.searchResults.topics = res.topics;
                 reference.searchResults.text = res.text;
                 res.sections.forEach(section => {

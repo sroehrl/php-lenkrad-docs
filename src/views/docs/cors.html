@@ -1,0 +1,74 @@
+<div>
+    <div version="<0.2" class="bg-warning p-2 border-danger border-l-4 relative">
+        <p>
+            This topic isn't implemented in your version of LENKRAD.
+        </p>
+    </div>
+    <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
+        <!-- url: /docs/cors -->
+        <h1>CORS</h1>
+        <div version="<0.2" class="bg-warning p-2 border-danger border-l-4 relative">
+            <p>
+                This topic isn't implemented in your version of LENKRAD.
+            </p>
+        </div>
+        <p>Dealing with cross origin requests?</p>
+        <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
+            <a href="/docs/cors#class" class="button-primary">The CORS class</a>
+
+        </div>
+        <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+            <h2 id="class">The CORS class</h2>
+            <p>
+                If required, invoke an instance of the CORS class into your app.
+            </p>
+            <h3>Main methods</h3>
+            <div class="grid grid-cols-3 gap-3 w-full overflow-x-auto overflow-x-auto">
+                <div class="border-b-2 border-primary font-lg">Method</div>
+                <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+                <p>addAllowedOrigin(string $origin)</p>
+                <p class="span-x-2">Registers an accepted origin</p>
+                <p>addAllowedMethod(string $method)</p>
+                <p class="span-x-2">Sets an allowed method</p>
+                <p>setAllowedMethods(array $allowedMethods)</p>
+                <p class="span-x-2">Sets allowed methods</p>
+                <p>addAllowedHeader(string $method)</p>
+                <p class="span-x-2">Sets an allowed header</p>
+                <p>setAllowedHeaders(array $allowedHeaders)</p>
+                <p class="span-x-2">Set allowed headers</p>
+            </div>
+            <h3>Example</h3>
+            <pre class="normalize-code"><code class="language-php">
+                ?php
+
+                // /public/index.php
+
+                use Neoan\NeoanApp;
+                use Neoan\Routing\Route;
+                use Neoan\Helper\Setup;
+                use Neoan\Cors\Cors;
+
+                ...
+
+                // 1. setup cors
+                $cors = new Cors();
+                $cors->addAllowedOrigin('*')
+                     ->setAllowedMethods(['GET','OPTIONS', 'POST', 'PUT'])
+                     ->setAllowedHeaders(['Content-Type', 'X-Auth-Token', 'Authorization', 'Origin'])
+
+                $app = new NeoanApp($setup);
+
+                // 2. invoke
+                $app->invoke($cors);
+
+                // 3. make instance available for Routables (optional)
+                $app->injectionProvider->set(Cors, $cors);
+
+                ...
+
+                // run application
+                $app->run();
+            </code></pre>
+        </div>
+    </section>
+</div>
