@@ -180,37 +180,37 @@
 
     </div>
     <script type="text/html" id="one">
-        &lt;section&gt;
+    &lt;section&gt;
         &lt;!-- n-if: element removed if not true --&gt;
         &lt;!-- NOTE: can only have one child (element or text-node) --&gt;
         &lt;h1 n-if="boolean"&gt;&#123;&#123;today}}&lt;/h1&gt;
-        &lt;/section&gt;
-        &lt;table&gt;
+    &lt;/section&gt;
+    &lt;table&gt;
         &lt;!-- n-for: iterates similar to foreach --&gt;
         &lt;tr n-for="results as result"&gt;
-        &lt;!-- substitutions work in attributes as well --&gt;
-        &lt;td&gt;&lt;a href="&#123;&#123;result.link}}"&gt;&#123;&#123;result.link}}&lt;/a&gt;&lt;/td&gt;
-        &lt;td&gt;&#123;&#123;result.headline}}&lt;/td&gt;
+            &lt;!-- substitutions work in attributes as well --&gt;
+            &lt;td&gt;&lt;a href="&#123;&#123;result.link}}"&gt;&#123;&#123;result.link}}&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;&#123;&#123;result.headline}}&lt;/td&gt;
         &lt;/tr&gt;
-        &lt;/table&gt;
+    &lt;/table&gt;
     </script>
     <script type="text/html" id="skeleton">
-        &lt;!DOCTYPE html&gt;
-        &lt;html lang="en"&gt;
-        &lt;head&gt;
+    &lt;!DOCTYPE html&gt;
+    &lt;html lang="en"&gt;
+    &lt;head&gt;
         &lt;meta charset="UTF-8"&gt;
         &lt;title&gt;&#123;&#123;title}}&lt;/title&gt;
-        &lt;/head&gt;
-        &lt;body&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
         &lt;div class="p-3"&gt;
-        &#123;&#123;main}}
+            &#123;&#123;main}}
         &lt;/div&gt;
         &lt;footer&gt;&copy; &#123;&#123;year}}&lt;/footer&gt;
-        &lt;/body&gt;
+    &lt;/body&gt;
     </script>
     <script type="text/html" id="view">
-        &lt;div class="bg-warning"&gt;
+    &lt;div class="bg-warning"&gt;
         &#123;&#123;fromHome}}
-        &lt;/div&gt;
+    &lt;/div&gt;
     </script>
 </section>

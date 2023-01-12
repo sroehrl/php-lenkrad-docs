@@ -18,6 +18,9 @@ class Loader
     public function __invoke(NeoanApp $app): self
     {
         session_start();
+        if(!isset($_SESSION['version'])){
+            $_SESSION['version'] = '0.2';
+        }
         $app->invoke(new AttributeRouting('App'));
         $this->templating($app);
 //        $this->database();
@@ -33,7 +36,7 @@ class Loader
             'webPath' => $app->webPath,
             'year' => date('Y'),
             'currentRoute' => Store::dynamic('currentRoute'),
-            'version' => $_SESSION['version'] ?? '0.2'
+            'version' => $_SESSION['version']
         ]);
         Constants::addCustomAttribute('version', function (\DOMAttr &$attr){
             $version = $attr->value;

@@ -62,7 +62,7 @@
                 $app->invoke($cors);
 
                 // 3. make instance available for Routables (optional)
-                $app->injectionProvider->set(Cors, $cors);
+                $app->injectionProvider->set(Cors::class, $cors);
 
                 ...
 

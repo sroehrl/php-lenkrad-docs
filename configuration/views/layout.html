@@ -25,14 +25,17 @@
 </head>
 <body class="bg-neutral-dark flex" style="flex-direction: column; min-height: 100vh" x-data="mainComponent">
 <header class="text-white p-4 border-t-5 border-secondary bg-contrast" >
+    <div class="cursor-pointer absolute lg:none" x-on:click="showMenu=!showMenu">
+        <svg style="width: 30px" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </div>
     <a class="font-xl text-center block" href="/">
         LENKRAD <span class="none md:inline-block">- The modern PHP core</span>
     </a>
     <div class="grid grid-cols-5 gap-3">
         <div >
             <select x-on:change="changeVersion" x-model="version" class="bg-gray-50 border-l-2 border-t-0 border-r-0 border-b-0 pl-2 pr-2 pt-1 pb-1 text-white rounded bg-contrast-dark">
-                <option value="0.1">v0.1.x</option>
                 <option value="0.2">v0.2.x</option>
+                <option value="0.1">v0.1.x</option>
             </select>
         </div>
         <div class="span-x-3 ">
@@ -43,9 +46,7 @@
 
 
 
-    <div class="cursor-pointer lg:none" x-on:click="showMenu=!showMenu">
-        <svg style="width: 30px" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-    </div>
+
 </header>
 <div class="flex flex-1 overflow-x-hidden" style="max-width: 100%">
 
