@@ -3,6 +3,7 @@
 use Configuration\Loader;
 use Neoan\Enums\GenericEvent;
 use Neoan\Event\Event;
+use Neoan\Helper\Setup;
 use Neoan\NeoanApp;
 use Neoan\Request\Request;
 use Neoan\Store\Store;
@@ -17,7 +18,10 @@ $root = dirname(__DIR__);
 
 require_once $root . '/vendor/autoload.php';
 
-$app = new NeoanApp($root . '/src', __DIR__ , $root);
+$setup = new Setup();
+$setup->setPublicPath($root . '/public')->setLibraryPath($root . '/src');
+
+$app = new NeoanApp($setup, $root);
 $app->invoke(new Loader());
 Event::on(GenericEvent::BEFORE_RENDERING, function($event) use($start){
     $uri = Request::getRequestUri();

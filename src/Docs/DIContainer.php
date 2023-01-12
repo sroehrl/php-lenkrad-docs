@@ -6,7 +6,7 @@ use Neoan\Routing\Interfaces\Routable;
 use Neoan\Routing\Attributes\Web;
 use Neoan\Store\Store;
 
-#[Web('/docs/dependency-injection', '/docs/in-development.html')]
+#[Web('/docs/dependency-injection', '/docs/dicontainer.html')]
 class DIContainer implements Routable
 {
     public function __invoke(): array

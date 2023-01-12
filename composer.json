@@ -4,7 +4,7 @@
   "type": "project",
   "license": "MIT",
   "require": {
-    "neoan.io/core": "dev-master",
+    "neoan.io/core": "dev-IsForeignKey",
     "ext-dom": "*"
   },
   "autoload": {

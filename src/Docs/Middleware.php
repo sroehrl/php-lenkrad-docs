@@ -6,7 +6,7 @@ use Neoan\Routing\Interfaces\Routable;
 use Neoan\Routing\Attributes\Web;
 use Neoan\Store\Store;
 
-#[Web('/docs/middleware', '/docs/in-development.html')]
+#[Web('/docs/middleware', '/docs/middleware.html')]
 class Middleware implements Routable
 {
     public function __invoke(): array

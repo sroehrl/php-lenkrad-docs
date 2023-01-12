@@ -1,12 +1,144 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
 <!--    url: /docs/middleware -->
     <h1>Middleware</h1>
-    <p>Middleware introduction</p>
+    <p>
+        Middleware chaining is an important concept when working with LENKRAD.
+        We are going to focus on routable classes here.
+    </p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/middleware#concept" class="button-contrast-light">Concept</a>
+        <a href="/docs/middleware#loading" class="button-contrast-light">Loading middleware</a>
+        <a href="/docs/middleware#declaring" class="button-contrast-light">Declaring middleware</a>
+        <a href="/docs/passing-on" class="button-contrast-light">Passing on values</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="concept">Concept</h2>
+        <p>
+            Middleware classes in routes need to implement <em>\Neoan\Routing\Interfaces\Routable</em> and be invokable
+            (using an __invoke-method). Middleware can be chained and is commonly used for route-guards or retrieval of repetitive information (e.g. current user).
+            The structure allows for route controllers to double as middleware and reuse their functionality.
+        </p>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="loading">Loading middleware</h2>
+        <p>
+            When using Attributes
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            namespace App\Docs;
+
+            use App\Middleware\RequiresAuth;
+            use App\Middleware\RequiresWritePrivilege;
+            use Neoan\Provider\Injections;
+            use Neoan\Routing\Interfaces\Routable;
+            use Neoan\Routing\Attributes\Web;
+
+            // Attribute routing directly allows for middleware chaining.
+            // Here, both "RequiresAuth" and "RequiresWritePrivilege" is executed
+            // before resolving the route /docs/middleware
+            #[
+                Web(
+                    '/docs/middleware',
+                    '/docs/middleware.html',
+                    RequiresAuth::class,
+                    RequiresWritePrivilege::class
+                )
+            ]
+            class Middleware implements Routable
+            {
+                public function __invoke(Injections $injections): array
+                {
+                    // see "Declaring middleware"
+                    return ['user' => $injections->get('user', null)];
+                }
+            }
+        </code></pre>
+        <p>
+            When using Route declarations
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            namespace App;
+
+            use Neoan\Routing\Route;
+            use App\Middleware\RequiresAuth;
+            use App\Middleware\RequiresWritePrivilege;
+            use App\Person\UpdatePerson;
+
+            // When chaining using the route class, the classes are invoked in order,
+            // effectively making the last class your controller
+            Route::put('/person/:id', RequiresAuth::class, RequiresWritePrivilege::class, UpdatePerson::class);
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="declaring">Declaring middleware</h2>
+        <p>
+            The structure of middleware does not differ from a controller, making it possible to use the cli to create
+            middleware classes just as one would generate a controller.
+        </p>
+        <p>Example</p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            namespace App\Middleware;
+
+            use Auth;
+            use Neoan\Routing\Interfaces\Routable;
+            use Neoan\Errors\Unauthorized;
+            use Neoan\Provider\Injections;
+
+            // This middleware stops execution and throws an unauthorized error if user is not logged in
+            class RequiresAuth implements Routable
+            {
+
+                // using "auth" (custom) and "injections" (included in core) from DI-container
+                public function __invoke(Auth $auth, Injections $injections): void
+                {
+                    if(!$user = $auth->get()) {
+                        new Unauthorized();
+                    }
+                    $injections->set('user', $user);
+                }
+            }
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="passing-on">Passing on values</h2>
+        <p>
+            As seen in the example above, we are able to hook into the injection provider to write values to the following controllers in the chain.
+            However, you might consider choosing to adjust your middleware to be used by the auto-wiring mechanism of the DI-container.
+            To do so, make sure to return the running instance (see <a href="/docs/dependency-injection">DI-container</a>).
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            namespace App\Middleware;
+
+            use Auth;
+            use Neoan\Routing\Interfaces\Routable;
+            use Neoan\Errors\Unauthorized;
+
+            class RequiresAuth implements Routable
+            {
+                // let's add a user array
+                public array $user;
+
+                // we can remove the injections and return ourselves
+                public function __invoke(Auth $auth): static
+                {
+                    // let's use the local variable "user"
+                    if(!$this->user = $auth->get()) {
+                        new Unauthorized();
+                    }
+
+                    // finally, return the instance
+                    return $this;
+                }
+            }
+        </code></pre>
     </div>
 </section>

@@ -7,8 +7,10 @@ use Neoan\Cli\Application;
 use Neoan\NeoanApp;
 
 require_once __DIR__ . '/vendor/autoload.php';
+$setup = new Setup();
+$setup->setPublicPath(__DIR__ . '/public')->setLibraryPath(__DIR__ . '/src');
 
-$app = new NeoanApp(__DIR__ . '/src', __DIR__ . '/public', __DIR__);
+$app = new NeoanApp($setup, __DIR__);
 
 $console = new Application($app);
 $console->add(new WebRouteCommand($app));
