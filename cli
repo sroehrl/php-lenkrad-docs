@@ -4,6 +4,7 @@
 
 use Configuration\WebRouteCommand;
 use Neoan\Cli\Application;
+use Neoan\Helper\Setup;
 use Neoan\NeoanApp;
 
 require_once __DIR__ . '/vendor/autoload.php';

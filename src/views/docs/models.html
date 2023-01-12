@@ -124,7 +124,12 @@
             <p>Signifies a property that shall be ignored by database transactions.</p>
             <p>Initialize(mixed $setter)</p>
             <p>Attaches a value or instance to the model at creation. (For example a date-converter)</p>
-            <p>IsForeignKey(string $table, string $property, string $modelName)</p>
+            <div version="0.1">
+                <p>IsForeignKey(string $table, string $property, string $modelName)</p>
+            </div>
+            <div version=">0.1">
+                <p>IsForeignKey(string $modelName, ?string $property)</p>
+            </div>
             <p>Enhances relationship lookup performance and enables <a href="/docs/models#magic">magic relationships</a>
             </p>
             <p>IsPrimaryKey</p>
@@ -455,6 +460,7 @@
             use Neoan\Model\Attributes\IsPrimaryKey;
             use Neoan\Model\Attributes\IsForeignKey;
             use Neoan\Model\Traits\TimeStamps;
+            use App\Models\Movie;
 
             class Rating extends Model
             {
@@ -462,7 +468,8 @@
                 #[IsPrimaryKey]
                 public int $id;
 
-                #[IsForeignKey('movie', 'id')]
+                <span><span version="0.1">#[IsForeignKey('movie', 'id')]</span></span>
+                <span><span version=">0.1">#[IsForeignKey(Movie::class)]</span></span>
                 public int $movieId;
 
                 public int $rating;
@@ -564,7 +571,8 @@
                 public Collection $ratings;
 
                 // let's pretend we have a model "Director"
-                #[IsForeignKey('director','id', Director::class)]
+                <span><span version="0.1">#[IsForeignKey('director','id', Director::class)]</span></span>
+                <span><span version=">0.1">#[IsForeignKey(Director::class)]</span></span>
                 public int $directorId;
 
                 use TimeStamps;

@@ -1,12 +1,166 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
 <!--    url: /docs/dependency-injection -->
     <h1>Dependency injection container</h1>
-    <p>DI introduction</p>
+    <p>
+        Lenkrad uses auto-wiring to enable dependency injection in a convenient way.
+    </p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/dependency-injection#concept" class="button-contrast-light">Concept</a>
+        <a href="/docs/dependency-injection#usage" class="button-contrast-light">Using the DI-Container</a>
+        <a href="/docs/dependency-injection#registration" class="button-contrast-light">Manual registration</a>
+        <a href="/docs/dependency-injection#creation" class="button-contrast-light">Creating an injectable class</a>
+        <a href="/docs/dependency-injection#di-vs-middleware" class="button-contrast-light">Injecting vs Middleware</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="concept">Concept</h2>
+        <p>
+            The auto-wiring loading mechanism uses existing instances of injected classes or creates a new instance if
+            the current controller is the first member using the class. Some classes are already instantiated by the
+            app itself (e.g. Injections, Setup, NeoanApp).
+        </p>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="usage">Using the DI-Container</h2>
+        <p>
+            You can automatically inject any class adhering to the following:
+        </p>
+        <ul>
+            <li>Has an invoke-method</li>
+            <li>Invoke-method returns instance of the class itself (singleton)</li>
+        </ul>
+        <p>
+            Example
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            namespace App\MyRoute;
+
+            use Auth;
+            use Neoan\NeoanApp;
+            use App\Middleware\RequiresAuth;
+
+            class MyRoute implements Routable
+            {
+
+                // simply define your required injections
+                public function __invoke(NeoanApp $app, RequiresAuth $authenticated): array
+                {
+                    // and use them as you please
+                    return [
+                        'web-path' => $app->webPath,
+                        'current-user' => $authenticated->user
+                    ];
+                }
+            }
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="registration">Manual registration</h2>
+        <p>
+            If you want/need to ensure the existence of an instance and it's properties,
+            you can use the injection provider directly:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            use Neoan\NeoanApp;
+
+            ...
+
+            $app = new NeoanApp($setup);
+            $app->injectionProvider->set(App\MyClass, new App\MyClass())
+
+            ...
+
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="creation">Creating an injectable class</h2>
+        <p>
+            To inspire your creativity, let's look at some examples.
+        </p>
+        <p>Example 1: Auth</p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            namespace App\Middleware;
+
+            use Neoan\Routing\Interfaces\Routable;
+            // using https://packagist.org/packages/neoan3-apps/stateless
+            use Neoan3\Apps\Stateless;
+
+
+            class Auth implements Routable
+            {
+
+                private ?array $auth;
+
+                public function __invoke(): self
+                {
+                    try{
+                        $this->auth = Stateless::validate();
+                    } catch (\Exception $e) {
+                        $this->auth = null;
+                    }
+                    return $this;
+                }
+
+                public function isLoggedIn(): bool
+                {
+                    return (bool) $this->auth;
+                }
+
+                public function getUserId()
+                {
+                    return $this->auth['id'] ?? null;
+                }
+
+            }
+
+        </code></pre>
+        <p>Example 2: Making a model injectable (this is esoteric!)</p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            namespace App\User;
+
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Model;
+
+            class User extends Model
+            {
+                #[IsPrimaryKey]
+                public int $id;
+
+                ...
+
+                public function __invoke(Auth $auth): static
+                {
+                    $this->rehydrate($auth->getUserId())
+                    return $this;
+                }
+
+            }
+
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="di-vs-middleware">Injecting vs. Middleware</h2>
+        <p>
+            In these examples, one can see that auto-wiring injections often makes the use of chaining middleware in
+            routes redundant. Choosing which path to take is not only a question of preference, however.
+            One should take into consideration the project necessities and structure as a whole.
+            To help you make that decision, we recommend the following (non-binding) rule:
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <p><em>Are values passed on?</em></p>
+            <p>Injection is probably the easier approach</p>
+            <p><em>Is the class conditional towards execution?</em></p>
+            <p>Middleware is probably the easier approach</p>
+            <p><em>Is both the case?</em></p>
+            <p>Design your class to be used as both and use it simultaneously as middleware and DI</p>
+        </div>
     </div>
 </section>
