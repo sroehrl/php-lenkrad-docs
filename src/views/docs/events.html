@@ -1,12 +1,165 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
 <!--    url: /docs/events -->
     <h1>Events</h1>
-    <p>Events introduction</p>
+    <p>
+        Events are commonly used to react to code executed later in the process.
+        This is useful both to listen to internal processes, as well as custom defined events.
+    </p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/events#class" class="button-contrast-light">The Event class</a>
+        <a href="/docs/events#generic" class="button-contrast-light">Generic events</a>
+        <a href="/docs/events#examples" class="button-contrast-light">Basic examples</a>
+        <a href="/docs/events#listening-classes" class="button-contrast-light">Listening to classes</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="class">The Event class</h2>
+        <p>
+            Event is on of the classes used statically.
+        </p>
+        <h3>Main methods</h3>
+        <div class="grid grid-cols-3 gap-3 w-full overflow-x-auto overflow-x-auto">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <p>Event::on(string $eventName, callable $callable)</p>
+            <p class="span-x-2">Executes a callable when the defined event is dispatched</p>
+            <p>Event::dispatch(string $eventName, mixed $payload)</p>
+            <p class="span-x-2">Dispatches an event and triggers registered listeners</p>
+            <p>Event::onAny(callable $callable)</p>
+            <p class="span-x-2">Executes a callable whenever an event is dispatched</p>
+            <p>Event::subscribeToClass(string $className, callable $callable)</p>
+            <p class="span-x-2">Fires whenever the notify event is fired from internal classes (Routable & Model updates) or custom classes made available through:</p>
+            <p>Event::makeListenable(string $className)</p>
+            <p class="span-x-2">Exposes the notifier in a custom class</p>
+        </div>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="generic">Generic events</h2>
+        <p>
+            Lenkrad dispatches own events that are used internally, but can be reacted on whenever convenient.
+        </p>
+        <h3>Generic events</h3>
+        <div class="grid grid-cols-3 gap-3 w-full overflow-x-auto overflow-x-auto">
+            <div class="border-b-2 border-primary font-lg">Event</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <p>DATABASE_ADAPTER_CONNECTED</p>
+            <p class="span-x-2">Fires when a database adapter has been loaded into the app</p>
+            <p>BEFORE_DATABASE_TRANSACTION</p>
+            <p class="span-x-2">Fires whenever a database transaction is about to happen</p>
+            <p>AFTER_DATABASE_TRANSACTION</p>
+            <p class="span-x-2">Fires whenever a database transaction happened</p>
+            <p>BEFORE_RENDERING</p>
+            <p class="span-x-2">Fires before the rendering process begins</p>
+            <p>REQUEST_HANDLER_INITIALIZED</p>
+            <p class="span-x-2">Fires when the request handler is initialized</p>
+            <p>REQUEST_HEADERS_SET</p>
+            <p class="span-x-2">Fires when request headers are set</p>
+            <p>REQUEST_INPUT_PARSED</p>
+            <p class="span-x-2">Fires when input has been parsed into "Input"</p>
+            <p>ROUTE_HANDLER_INITIALIZED</p>
+            <p class="span-x-2">Fires when the route handler is initialized</p>
+            <p>ROUTE_REGISTERED</p>
+            <p class="span-x-2">Fires when a route is registered</p>
+            <p>RESPONSE_HANDLER_SET</p>
+            <p class="span-x-2">Fires when the response handler is set</p>
+            <p>BEFORE_RESPONSE</p>
+            <p class="span-x-2">Fires before result is handed over to the response handler</p>
+            <p>ROUTE_INJECTION</p>
+            <p class="span-x-2">Fires when data is injected into a route</p>
+            <p>BEFORE_ROUTABLE_EXECUTION</p>
+            <p class="span-x-2">Fires before a routable class is executed</p>
+        </div>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="examples">Basic examples</h2>
+        <h3>Listening to a generic event</h3>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+
+            use Neoan\Event\Event;
+            use Neoan\Enums\GenericEvent;
+
+            Event::on(GenericEvent::BEFORE_RESPONSE, function($event){
+                if($event['handler'] === 'html'){
+                    header('X-Custom-header: web-app');
+                }
+            });
+        </code></pre>
+        <h3>Listening to a custom event</h3>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+
+            use Neoan\Event\Event;
+
+            $logFile = dirname(__DIR__,2) . '/log.txt';
+
+            Event::on('log', function($event){
+                $data = [
+                    'time' => time(),
+                    'event' => $event
+                ];
+                file_put_contents($logFile, json_encode($data), FILE_APPEND);
+            });
+        </code></pre>
+        <h3>Dispatching a custom event</h3>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+
+            use Neoan\Event\Event;
+
+            ...
+
+            $event = [
+                'msg' => 'Email sent to: ' . $newUser->email
+            ];
+
+            Event::dispatch('log', $event);
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="listening-classes">Listening to classes</h2>
+        <p>
+            You can subscribe to particular classes an react to whenever they use their notifier.
+            This can be useful when listing for a particular model, for example.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+
+            use Neoan\Event\Event;
+            use App\Models\UserModel;
+
+            ...
+
+            Event::subscribeToClass(UserModel::class, function($eventName, $class, $arguments){
+                // do something
+            });
+
+        </code></pre>
+        <p>
+            You can also make any class listenable like this
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ?php
+
+            use Neoan\Event\Event;
+            use Neoan\Event\Listenable;
+            use Neoan\Event\EventNotification;
+
+            class AnyClass implements Listenable
+            {
+                private EventNotification $notifier;
+
+                function __construct()
+                {
+                    $this->notifier = Event::makeListenable($this);
+                }
+                function doSomething(string $value)
+                {
+                    ...
+                    $this->notifier->inform($value);
+                }
+            }
+
+        </code></pre>
     </div>
 </section>
