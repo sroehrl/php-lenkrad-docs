@@ -829,12 +829,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sroehrl/neoan.io-lenkrad-core.git",
-                "reference": "1c863f508a4f3b37681275a3d1e781de76a2cb47"
+                "reference": "1da8889afb4abec17fa5338634c2a091efc4d8ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sroehrl/neoan.io-lenkrad-core/zipball/1c863f508a4f3b37681275a3d1e781de76a2cb47",
-                "reference": "1c863f508a4f3b37681275a3d1e781de76a2cb47",
+                "url": "https://api.github.com/repos/sroehrl/neoan.io-lenkrad-core/zipball/1da8889afb4abec17fa5338634c2a091efc4d8ae",
+                "reference": "1da8889afb4abec17fa5338634c2a091efc4d8ae",
                 "shasum": ""
             },
             "require": {
@@ -873,9 +873,9 @@
             "description": "Neoan.io Lenkrad Framework",
             "support": {
                 "issues": "https://github.com/sroehrl/neoan.io-lenkrad-core/issues",
-                "source": "https://github.com/sroehrl/neoan.io-lenkrad-core/tree/v0.2.1"
+                "source": "https://github.com/sroehrl/neoan.io-lenkrad-core/tree/v0.2.2"
             },
-            "time": "2023-01-12T22:18:09+00:00"
+            "time": "2023-01-13T04:11:55+00:00"
         },
         {
             "name": "neoan.io/legacy-db-adapter",
