@@ -83,43 +83,88 @@
         <p>3. /src/Home/view.html</p>
         <pre class="normalize-code"><code class="language-html" data-class="strip-html" data-id="view"></code></pre>
         <p>4. /public/index.php</p>
-        <pre class="normalize-code"><code class="language-php">
-        use Neoan\NeoanApp;
-        use Neoan\Routing\Route;
-        use Neoan\Render\Renderer;
-        use Neoan\Enums\ResponseOutput;
-        use Neoan\Response\Response;
-        use App\Home\Home;
+        <div>
+            <pre version="0.1" class="normalize-code"><code class="language-php">
+            use Neoan\NeoanApp;
+            use Neoan\Routing\Route;
+            use Neoan\Render\Renderer;
+            use Neoan\Enums\ResponseOutput;
+            use Neoan\Response\Response;
+            use App\Home\Home;
 
-        $projectPath = dirname(__DIR__);
-        require_once $projectPath . '/vendor/autoload.php';
+            $projectPath = dirname(__DIR__);
+            require_once $projectPath . '/vendor/autoload.php';
 
-        $pathToSourceFiles = $projectPath . '/src';
-        $publicPath = __DIR__;
+            $pathToSourceFiles = $projectPath . '/src';
+            $publicPath = __DIR__;
 
-        $app = new NeoanApp($pathToSourceFiles, $publicPath);
+            $app = new NeoanApp($pathToSourceFiles, $publicPath);
 
-        // to simplify our life, let's set this app to default to SSR ...
-        Response::setDefaultOutput(ResponseOutput::HTML);
-        // ... and set a default entry path for our views
-        Renderer::setTemplatePath('src/');
+            // to simplify our life, let's set this app to default to SSR ...
+            Response::setDefaultOutput(ResponseOutput::HTML);
+            // ... and set a default entry path for our views
+            Renderer::setTemplatePath('src/');
 
-        // Let's set up our skeleton
-        Renderer::setHtmlSkeleton(
-            'src/views/skeleton.html', // our skeleton HTML
-            'main',     // our component placement
-            [
-                'year' => '2022',
-                'title' => 'My App'
-            ]           // lastly, we can set default variables used in our skeleton
-        );
+            // Let's set up our skeleton
+            Renderer::setHtmlSkeleton(
+                'src/views/skeleton.html', // our skeleton HTML
+                'main',     // our component placement
+                [
+                    'year' => '2022',
+                    'title' => 'My App'
+                ]           // lastly, we can set default variables used in our skeleton
+            );
 
-        // register a test route
-        Route::get('/', Home::class)->view('Home/view.html');
+            // register a test route
+            Route::get('/', Home::class)->view('Home/view.html');
 
-        // run application
-        $app->run();
-        </code></pre>
+            // run application
+            $app->run();
+            </code></pre>
+        </div>
+        <div>
+            <pre version=">0.1" class="normalize-code"><code class="language-php">
+            use Neoan\NeoanApp;
+            use Neoan\Helper\Setup;
+
+            use Neoan\Routing\Route;
+            use Neoan\Render\Renderer;
+            use Neoan\Enums\ResponseOutput;
+            use Neoan\Response\Response;
+            use App\Home\Home;
+
+            $projectPath = dirname(__DIR__);
+            require_once $projectPath . '/vendor/autoload.php';
+
+            $setup = new Setup();
+            $setup->setPublicPath($projectPath . '/public')
+                  ->setLibraryPath($projectPath . '/src')
+                  // set template path relative to composer file path
+                  ->setTemplatePath('src/')
+                  // enable the use of a skeleton
+                  ->setUseSkeleton(true)
+                  // what is our skeleton HTML?
+                  ->setSkeletonHTML('src/views/skeleton.html')
+                  // which variable to use for component placement
+                  ->setSkeletonComponentPlacement('main')
+                  // finally, let's set default variables
+                  ->setSkeletonVariables([
+                    'year' => '2022',
+                    'title' => 'My App'
+                  ]);
+
+
+
+            $app = new NeoanApp($setup, $publicPath);
+
+            // register a test route
+            Route::get('/', Home::class)->view('Home/view.html');
+
+            // run application
+            $app->run();
+            </code></pre>
+        </div>
+
         <blockquote>
             We're lumping everything in the index file to show everything at one glance.
             Feel free to have a look at our starter projects to get suggestions of how to structure your

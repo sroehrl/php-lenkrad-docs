@@ -19,7 +19,19 @@ $root = dirname(__DIR__);
 require_once $root . '/vendor/autoload.php';
 
 $setup = new Setup();
-$setup->setPublicPath($root . '/public')->setLibraryPath($root . '/src');
+$setup->setPublicPath($root . '/public')
+    ->setLibraryPath($root . '/src')
+    ->setTemplatePath('src/views')
+    ->setUseSkeleton(true)
+    ->setSkeletonHTML('configuration/views/layout.html')
+    ->setSkeletonComponentPlacement('main')
+    ->setSkeletonVariables([
+        'title' => Store::dynamic('pageTitle'),
+        'webPath' => Store::dynamic('webPath'),
+        'year' => date('Y'),
+        'currentRoute' => Store::dynamic('currentRoute'),
+        'version' => Store::dynamic('version')
+    ]);
 
 $app = new NeoanApp($setup, $root);
 $app->invoke(new Loader());

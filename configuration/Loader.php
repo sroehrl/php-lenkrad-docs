@@ -29,15 +29,11 @@ class Loader
     private function templating(NeoanApp $app): void
     {
         Store::write('pageTitle', 'My App');
-        Renderer::setTemplatePath('src/views');
+
+        Store::write('webPath', $app->webPath);
+        Store::write('version', $_SESSION['version']);
+
         NotFound::setTemplate('configuration/views/404.html');
-        Renderer::setHtmlSkeleton('configuration/views/layout.html', 'main', [
-            'title' => Store::dynamic('pageTitle'),
-            'webPath' => $app->webPath,
-            'year' => date('Y'),
-            'currentRoute' => Store::dynamic('currentRoute'),
-            'version' => $_SESSION['version']
-        ]);
         Constants::addCustomAttribute('version', function (\DOMAttr &$attr){
             $version = $attr->value;
             $firstLetter = substr($version,0,1);
