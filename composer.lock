@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ef489578dd3d0cc6c7c005a224630594",
+    "content-hash": "250af327b4ee8b0e0724d89aea72910f",
     "packages": [
         {
             "name": "brick/math",
@@ -825,16 +825,16 @@
         },
         {
             "name": "neoan.io/core",
-            "version": "dev-setup-rendering",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sroehrl/neoan.io-lenkrad-core.git",
-                "reference": "51fb51f350e952df7898c066628c3730780261b3"
+                "reference": "1c863f508a4f3b37681275a3d1e781de76a2cb47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sroehrl/neoan.io-lenkrad-core/zipball/51fb51f350e952df7898c066628c3730780261b3",
-                "reference": "51fb51f350e952df7898c066628c3730780261b3",
+                "url": "https://api.github.com/repos/sroehrl/neoan.io-lenkrad-core/zipball/1c863f508a4f3b37681275a3d1e781de76a2cb47",
+                "reference": "1c863f508a4f3b37681275a3d1e781de76a2cb47",
                 "shasum": ""
             },
             "require": {
@@ -853,6 +853,7 @@
                 "ext-simplexml": "*",
                 "phpunit/phpunit": "9.5"
             },
+            "default-branch": true,
             "type": "package",
             "autoload": {
                 "psr-4": {
@@ -872,9 +873,9 @@
             "description": "Neoan.io Lenkrad Framework",
             "support": {
                 "issues": "https://github.com/sroehrl/neoan.io-lenkrad-core/issues",
-                "source": "https://github.com/sroehrl/neoan.io-lenkrad-core/tree/setup-rendering"
+                "source": "https://github.com/sroehrl/neoan.io-lenkrad-core/tree/v0.2.1"
             },
-            "time": "2023-01-13T03:34:25+00:00"
+            "time": "2023-01-12T22:18:09+00:00"
         },
         {
             "name": "neoan.io/legacy-db-adapter",
