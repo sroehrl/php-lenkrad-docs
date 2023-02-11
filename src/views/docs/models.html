@@ -9,6 +9,8 @@
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
         <a href="/docs/models#class" class="button-contrast-light">The Model class</a>
         <a href="/docs/models#define" class="button-contrast-light">Defining a model</a>
+        <a href="/docs/models#computed" class="button-contrast-light" version=">0.2">Computed values</a>
+        <a href="/docs/models#hooks" class="button-contrast-light" version=">0.2">Hooks</a>
         <a href="/docs/models#collections" class="button-contrast-light">Collections</a>
         <a href="/docs/models#usage" class="button-contrast-light">Using a model</a>
         <a href="/docs/models#pagination" class="button-contrast-light">Pagination</a>
@@ -216,6 +218,118 @@
             model declaration have been conducted. The <a href="/docs/cli-basics">cli tool</a> makes this possible using
             one command.
         </p>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10" version=">0.2">
+        <h2 id="computed">Computed values</h2>
+        <p>
+            A model is often more than a mapping to persistent data. Sometimes we want to derive information from that data and have our controllers consume it
+            with more ease. Computed values are meant to help with this.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            namespace App\Models;
+
+            use Neoan\Model\Model;
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Attributes\IsForeignKey;
+            use Neoan\Model\Attributes\Computed;
+
+            class Person extends Model
+            {
+                #[IsPrimaryKey]
+                public int $id;
+
+                #[IsForeignKey(User::class)]
+                public int $userId;
+
+                public string $firstName;
+
+                public string $lastName;
+
+                #[Computed]
+                public function fullName(): string
+                {
+                    return ($this->firstName ?? '') . ' ' . ($this->lastName ?? 'Anonymous');
+                }
+
+            }
+        </code></pre>
+        <h3>Consumption</h3>
+        <p>
+            Instead of having to call the method, you can read the value as property. <br>
+            Computed values are processed by data normalization and are therefore exposed in controller,
+            templating (rendering), or JSON response:
+        </p>
+        <h3>HTML</h3>
+        <pre class="normalize-code"><code class="language-html" data-class="strip-html" data-id="fullName"></code></pre>
+        <h3>JSON API response</h3>
+        <pre class="normalize-code"><code class="language-json">
+            {
+                "id": 1,
+                "firstName": "Adam",
+                "lastName": "Smith",
+                "fullName": "Adam Smith"
+            }
+        </code></pre>
+
+
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10" version=">0.2">
+        <h2 id="hooks">Hooks</h2>
+        <p>
+            Interacting with models fires <a href="/docs/events">Events</a> and every model is <a href="/docs/events#listening-classes">listenable</a>.
+            In some cases relying on "external" logic to facilitate things that should run "whenever I save" might better be addressed directly.
+            To do just that, you can choose to overwrite the following model-methods
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>afterStore()</p>
+            <p>Is executed after database transaction & rehydration</p>
+            <p>afterDeletion()</p>
+            <p>Is executed after database transaction & before destruction</p>
+        </div>
+        <p>
+            Remembering our examples above, let's pretend our movies have a rating based on the average of the
+            model <em>Rating</em>, representing a single vote by a user.
+        </p>
+
+        <pre class="normalize-code"><code class="language-php">
+            namespace App\Models;
+
+            use Neoan\Model\Model;
+            use Neoan\Model\Attributes\IsPrimaryKey;
+            use Neoan\Model\Attributes\IsForeignKey;
+
+            class Rating extends Model
+            {
+                #[IsPrimaryKey]
+                public int $id;
+
+                #[IsForeignKey(Movie::class)]
+                public int $movieId;
+
+                public int $rating;
+
+                public function afterStore(): void
+                {
+                    // if you want to fire respective events BEFORE your logic happens, place
+                    // this at the top. If you want to fire event AFTER your logic, at the end.
+                    // If you want to suppress events, don't call the parent method at all.
+                    // parent::afterStore();
+
+                    $newAverageRating = Calculations::methodReturningAverageRatingByMovieId($this->movieId);
+                    $movie = $this->movie();
+                    $movie->rated = $newAverageRating;
+                    $movie->store();
+                }
+
+            }
+        </code></pre>
+        <blockquote>
+            Be mindful of the execution chain and possible infinite loops when dealing with hooks. In this example,
+            it's easy to imagine what would happen if the model <em>Movie</em> would also use this hook and so on.
+        </blockquote>
+
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
         <h2 id="collections">Collections</h2>
@@ -601,9 +715,28 @@
             }
 
         </code></pre>
+        <p>
+            Alternatively, you can remain in the parent scope by using the "with"-attachment:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            // for this to work, the foreign key for class "Director" must exist.
+            $movie = Movie::byName('Avatar')->withDirector();
+
+            // now director is an object in $movie
+            $directorName = $movie->director->name;
+
+            // Since the binding isn't broken, we can leverage that for collections as well
+            $allMovies = Movie::find([])->each(fn(Movie $movie) => $movie->withDirector());
+
+        </code></pre>
         <blockquote>
             As mentioned, your IDE will not suggest the availability of magic methods.
             Refer to your IDE's guide on how to add magic methods to your suggestions (usually @method)
         </blockquote>
     </div>
+    <script type="text/html" id="fullName">
+    &lt;div class="bg-warning"&gt;
+        &#123;&#123;fullName}}
+    &lt;/div&gt;
+    </script>
 </section>

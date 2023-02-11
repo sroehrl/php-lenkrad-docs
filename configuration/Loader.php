@@ -19,7 +19,7 @@ class Loader
     {
         session_start();
         if(!isset($_SESSION['version'])){
-            $_SESSION['version'] = '0.2';
+            $_SESSION['version'] = '0.4';
         }
         $app->invoke(new AttributeRouting('App'));
         $this->templating($app);
