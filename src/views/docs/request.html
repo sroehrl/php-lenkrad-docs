@@ -18,7 +18,7 @@
         <a href="/docs/request#class" class="button-contrast-light">The Request class</a>
         <a href="/docs/request#request-test" class="button-contrast-light">Request Unit Testing</a>
         <a href="/docs/request#usage" class="button-contrast-light">Using Request</a>
-
+        <a href="/docs/request#guard" class="button-contrast-light" version=">0.3">Request guards</a>
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
         <h2 id="class">The Request class</h2>
@@ -107,5 +107,82 @@
                 ...
             }
         </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10" version=">0.3">
+        <h2 id="guard">Request guards</h2>
+        <p>
+            In order to provide a clean input/output structure while separating concerns in a clean manner,
+            you can use validation wrappers called "Request guards". This pattern allows for abstraction similar to models, but
+            for incoming data. Let's take the example above and make the following changes:
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+
+            class RandomClass extends Routable
+            {
+                public function __invoke(RandomGuard $request)
+                {
+                    // if we are here, all existence and validity is already taken care of
+                    $this->addToNewsletter($request->email);
+                    Response::redirect('/dashboard')
+                }
+            }
+        </code></pre>
+        <p>
+            Our RandomGuard extends RouteGuard and may look like this
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+
+            use Neoan\Request\RequestGuard;
+
+            class RandomGuard extends RequestGuard
+            {
+                // the request REQUIRES the property "email"
+                public string $email;
+
+                // the request CAN have the property "gender"
+                public ?string $gender;
+
+                // the request's value of "termsAccepted" is cast to boolean
+                public bool $termsAccepted;
+
+                // we want to further expand on what should be blocked
+                public function __invoke(): static
+                {
+                    // let the parent do it's magic
+                    parent::__invoke();
+
+
+                    // now let's block requests that don't fulfil our additional requirements
+                    $validation = new MyValidationClass();
+                    if(!$validation->isValidEmail($this->email) || !$this->termsAccepted) {
+                        $response = Response::getInstance();
+                        $response->setStatusCode(400);
+                        $response->respond('Bad Request');
+                    }
+
+                    return $this;
+                }
+            }
+        </code></pre>
+        <p>
+            The <em>RequestGuard</em> class uses constants to manipulate default behavior. To change the default behavior,
+            simply overwrite them in your guard.
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="border-b-2 border-primary font-lg">Constant</div>
+            <div class="border-b-2 border-primary font-lg">Description</div>
+            <p>const requestTypes = ['query', 'parameter', 'post'];</p>
+            <p>Reads from LENKRAD's request types in the provided order. You can change the order or exclude types.</p>
+            <p>const throwOnError = true;</p>
+            <p>
+                By default, the guard stops execution and responds with a 400 status code explaining what is missing/malformed.
+                If you want to handle errors yourself, simply set this to false;
+            </p>
+        </div>
+        <p>
+            As Guards can be chained, you can use them for complex privilege handling as well.
+        </p>
     </div>
 </section>
