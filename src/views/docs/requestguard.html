@@ -1,0 +1,27 @@
+<section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
+    <!--    url: /docs/requestguard -->
+    <h1>Request Guards</h1>
+    <p>
+        Incoming requests often require a few checks in order to evaluate their integrity. These checks include
+    </p>
+    <ul>
+        <li>Is the payload/the query malformed?</li>
+        <li>Does the payload correlate to the right types?</li>
+        <li>Does the payload need to be sanitized?</li>
+    </ul>
+    <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
+        <a href="/docs/requestguard#concept" class="button-contrast-light">The Concept</a>
+
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="concept">The Concept</h2>
+        <p>
+            A request guard captures the request and is in its easiest form similar to a model declaration.
+            By defining properties we decide which properties are optional or required, which properties should be cast into a type,
+            and what default values should be considered. Without further configuration, a request guard ends a request with an error message before executing your controller.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+
+        </code></pre>
+    </div>
+</section>
