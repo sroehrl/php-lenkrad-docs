@@ -1,12 +1,94 @@
-<section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
-<!--    url: /docs/cli -->
-    <h1>CLI Tool</h1>
-    <p>Advanced CLI introduction</p>
-    <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+<div>
+    <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
+        <!--    url: /docs/cli -->
+        <h1>CLI Tool</h1>
+        <p>Advanced CLI introduction</p>
+        <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
+            <a href="/docs/cli#commands" class="button-contrast-light">Commands</a>
 
-    </div>
-    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
-    </div>
-</section>
+        </div>
+        <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+            <h2 id="commands">Commands</h2>
+            <p>
+                Lenkrad uses the <a href="https://symfony.com/doc/current/components/console.html">Symfony console</a> to facilitate CLI commands.
+                It's wise to head over to the package's documentation, but for our purposes, here's a quick example using this documentation's custom route generator:
+            </p>
+            <pre class="normalize-code"><code class="language-php">
+            namespace Configuration;
+
+            use Neoan\Cli\Create\FileCreator;
+            use Neoan\NeoanApp;
+            use Symfony\Component\Console\Attribute\AsCommand;
+            use Symfony\Component\Console\Command\Command;
+            use Symfony\Component\Console\Input\InputArgument;
+            use Symfony\Component\Console\Input\InputInterface;
+            use Symfony\Component\Console\Output\OutputInterface;
+
+            #[
+                AsCommand(
+                    'create:webroute',
+                    'Starter: Creates file implementing Routable'
+                )]
+            class WebRouteCommand extends Command
+            {
+
+                private NeoanApp $neoanApp;
+
+                // should you need the core instance, you can pass it in
+                public function __construct(NeoanApp $neoanApp, string $name = null)
+                {
+                    $this->neoanApp = $neoanApp;
+                    parent::__construct($name);
+                }
+
+                // see https://symfony.com/doc/current/console.html#configuring-the-command
+                protected function configure()
+                {
+                    $this
+                        ->addArgument(
+                            'name',
+                            InputArgument::REQUIRED,
+                            'fully qualified namespace'
+                        );
+                }
+
+                // see https://symfony.com/doc/current/console.html#creating-a-command
+                protected function execute(InputInterface $input, OutputInterface $output): int
+                {
+                    FileCreator::process('controller', $input->getArgument('name'), $this->neoanApp, $output);
+                    $viewTemplate = file_get_contents($this->neoanApp->cliPath . '/.templates/ViewTemplate.html');
+
+                    $nameParts = explode('\\', $input->getArgument('name'));
+
+
+                    file_put_contents($this->neoanApp->appPath . '/views/docs/' . strtolower(end($nameParts)) . '.html', $viewTemplate);
+
+
+                    return Command::SUCCESS;
+                }
+            }
+            </code></pre>
+            <p>In order to register the command, open the file "cli" (or wherever you or your starter package placed the cli command) and load it.</p>
+            <pre class="normalize-code"><code class="language-php">
+
+            use Configuration\WebRouteCommand;
+            use Neoan\Cli\Application;
+            use Neoan\Helper\Setup;
+            use Neoan\NeoanApp;
+
+            require_once __DIR__ . '/vendor/autoload.php';
+            $setup = new Setup();
+            $setup->setPublicPath(__DIR__ . '/public')
+                  ->setLibraryPath(__DIR__ . '/src');
+
+            $app = new NeoanApp($setup, __DIR__);
+
+            $console = new Application($app);
+
+            // add your command(s)
+            $console->add(new WebRouteCommand($app));
+            $console->run();
+        </code></pre>
+        </div>
+    </section>
+</div>

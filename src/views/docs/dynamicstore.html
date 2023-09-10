@@ -3,10 +3,75 @@
     <h1>Dynamic Store</h1>
     <p>Dynamic Store introduction</p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/dynamic-store#class" class="button-contrast-light">The Store class</a>
+        <a href="/docs/dynamic-store#dynamic" class="button-contrast-light">The Dynamic class</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="class">The Neoan\Store class</h2>
+        <p>
+            The dynamic store is a simple key-value storage meant to be written throughout the procedural execution while being writable and readable until rendering or responding.
+            This is useful for default variable values when actual value can only be determined at a later point in time.
+        </p>
+        <h3>Static methods</h3>
+        <div class="grid grid-cols-3 gap-3 w-full overflow-x-auto overflow-x-auto">
+            <div class="border-b-2 border-primary font-lg">Method</div>
+            <div class="border-b-2 border-primary font-lg span-x-2">Description</div>
+            <p>Store::dynamic(string $variableName)</p>
+            <p class="span-x-2">Returns an instance of "Dynamic"</p>
+            <p>Store::write(string $variable, mixed $value)</p>
+            <p class="span-x-2">Writes to a store variable.</p>
+            <p>Store::readValue(string $variableName)</p>
+            <p class="span-x-2">Retrieves the current value of a store variable</p>
+            <p>Store::getInstance()</p>
+            <p class="span-x-2">Returns the instance of "Store"</p>
+        </div>
     </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="dynamic">The Dynamic class</h2>
+        <p>
+            The dynamic instance for a store variable allows us to break out of certain race conditions.
+            This is best explained with how this documentation uses it: In our layout template, the HTML contains a title tag.
+            However, we might not know the actual title of the page before executing all routable classes. Rather than having to worry about
+            passing on and handling a variable, we can use a dynamic value and - if applicable - set its value whenever needed.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            ...
+            $setup = new Setup();
+            $setup->setPublicPath($root . '/public')
+                  ->setSkeletonHTML('configuration/views/layout.html')
+                  ->setSkeletonVariables(['title' => Store::dynamic('title')])
+            ...
+        </code></pre>
+        <pre class="normalize-code"><code class="language-html" data-class="strip-html" data-id="layout">
+        </code></pre>
+        <p>In this example we prepare for the variable "title" to exist at the time of rendering, although it has yet to be set (/written to).</p>
+        <blockquote>
+            Tip: In many cases a default value is useful in order to ensure availability. Use "Store::write" early or even before in your execution logic (maybe in your setup).
+        </blockquote>
+        <p>
+            We can now decide to assign a value in any middleware or routable along the chain. For our example, we can add our custom page title in our route(s):
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+            #[Web('/docs/dynamic-store', '/docs/dynamicstore.html')]
+            class DynamicStore implements Routable
+            {
+                public function __invoke(): array
+                {
+                    Store::write('title', 'DynamicStore');
+                    return ['renderVariable' => 'exampleValue'];
+                }
+            }
+        </code></pre>
+    </div>
+    <script type="text/html" id="layout">
+    &lt;!-- layout.html --&gt;
+    &lt;!DOCTYPE html&gt;
+    &lt;html lang="en"&gt;
+    &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;&#123;&#123;title}}&lt;/title&gt;
+    &lt;/head&gt;
+    ...
+    </script>
 </section>

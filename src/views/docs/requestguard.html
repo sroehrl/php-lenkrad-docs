@@ -11,6 +11,8 @@
     </ul>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
         <a href="/docs/requestguard#concept" class="button-contrast-light">The Concept</a>
+        <a href="/docs/requestguard#error-behavior" class="button-contrast-light">Error behavior</a>
+        <a href="/docs/requestguard#request-types" class="button-contrast-light">Request types</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
@@ -21,7 +23,105 @@
             and what default values should be considered. Without further configuration, a request guard ends a request with an error message before executing your controller.
         </p>
         <pre class="normalize-code"><code class="language-php">
+        class MyRequest extends \Neoan\Request\RequestGuard
+        {
+            // the request REQUIRES the property "email"
+            public string $email;
 
+            // the request REQUIRES the property "name"
+            public string $name;
+
+            // the request CAN have the property "age",
+            // which will be cast to integer
+            public ?int $age;
+
+            // the request's value of "termsAccepted"
+            // is cast to boolean
+            public bool $termsAccepted;
+
+            // the request's value of "gender" is
+            // cast to the custom enum "GenderEnum"
+            public ?GenderEnum $gender;
+        }
+        </code></pre>
+        <p>
+            If the request does not contain all required properties, the request will be blocked.
+            In order to use a request guard for a particular endpoint, inject the guard in the controller.
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+        class MyEndpoint implements Routable
+        {
+            // Inject "MyRequest" as $request
+            public function __invoke(MyRequest $request): array
+            {
+                // let's assume we want to create a new person (model)
+                $person = new Person();
+                $person->email = $request->email;
+                if(isset($request->gender){
+                    $person->gender = $request->gender;
+                }
+                ...
+                /*
+                * or "lazy": (new Person((array) $request))->store();
+                */
+            }
+        }
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="error-behavior">Error behavior</h2>
+        <p>
+            If a request is not valid, a 400 HTTP response will be sent along with a reason (e.g. "missing property `x`", etc.).
+            However, you might want to turn that behavior off if necessary (e.g. for custom error handling).
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+        class MyRequest extends \Neoan\Request\RequestGuard
+        {
+            // if throwOnError is set to false, the default behavior of blocking the request is overridden
+            const throwOnError = false;
+
+            public string $email;
+
+            public string $name;
+
+            public ?int $age;
+
+            public bool $termsAccepted;
+
+            public ?GenderEnum $gender;
+        }
+        </code></pre>
+    </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="request-types">Request Types</h2>
+        <p>
+            By default, the request guard will accept requests of the following types:
+        </p>
+        <ul>
+            <li>'query', Query parameters</li>
+            <li>'parameter', as defined as a route-part</li>
+            <li>'post', payload submitted via POST, PUT, PATCH</li>
+            <li>'file', binary file uploads</li>
+        </ul>
+        <p>
+            You can limit the considered request types by the constant "requestTypes".
+        </p>
+        <pre class="normalize-code"><code class="language-php">
+        class MyRequest extends \Neoan\Request\RequestGuard
+        {
+            // only consider "query" and "parameter"
+            const requestTypes = ['query', 'parameter'];
+
+            public string $email;
+
+            public string $name;
+
+            public ?int $age;
+
+            public bool $termsAccepted;
+
+            public ?GenderEnum $gender;
+        }
         </code></pre>
     </div>
 </section>

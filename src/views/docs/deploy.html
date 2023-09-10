@@ -1,12 +1,141 @@
 <section class="w-4/5 xl:w-3/5 xxl:w-3/5 m-x-auto mt-5">
 <!--    url: /docs/deploy -->
     <h1>Deployment</h1>
-    <p>Deployment introduction</p>
     <div class="flex flex-wrap gap-4 " style="justify-content: space-between">
-        <a href="/docs/{{name.lower}}#class" class="button-contrast-light">The {{name}} class</a>
+        <a href="/docs/deploy#manual" class="button-contrast-light">Manual deployment</a>
+        <a href="/docs/deploy#aws-ec2" class="button-contrast-light">Example: AWS EC2</a>
 
     </div>
     <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
-        <h2 id="class">The {{name}} class</h2>
+        <h2 id="manual">Manual deployment</h2>
+        <p>We are working on various deployment helpers. For now, here is a checklist for manual deployment.</p>
+        <h3>Checklist initial installation</h3>
+        <ul>
+            <li>Apache or Nginx installed and configured?</li>
+            <li>PHP and required modules installed?</li>
+            <li>Database (MySQL) installed & configured?</li>
+            <li>Codebase uploaded?</li>
+            <li>Domain & SSL set up?</li>
+        </ul>
+        <h3>Checklist continuous deployment</h3>
+        <ul>
+            <li>Packages updated?</li>
+            <li>Models migrated?</li>
+        </ul>
     </div>
+    <div class="bg-neutral border-r-1 border-secondary p-3 mt-10">
+        <h2 id="aws-ec2">Example: Initial installation on AWS EC2</h2>
+        <p>If you are using AWS EC2, this could be your first deployment procedure:</p>
+        <h3>1. Create ec2 instance running Ubuntu (20.04 or higher)</h3>
+        <p>Store the pem-key & set the security group to accept traffic from anywhere on port 443 and 80.</p>
+        <h3>2. Log into the instance via ssh</h3>
+        <p>There are multiple ways of doing so depending on your OS. We recommend using WSL on Windows to unify the instructions for the following procedure.</p>
+        <p>In your terminal, go to the folder ".ssh"</p>
+        <pre class="normalize-code"><code class="language-bash">
+            cd ~/.ssh
+            mkdir keys
+            cp /path/to/downloaded/pem-key.pem keys/pem-key.pem
+            chmod 400 keys/pem-key.pem
+        </code></pre>
+        <p>Then, open the file config in vim/nano or similar and set up the following:</p>
+        <pre class="normalize-code"><code class="language-bash">
+            Host    my-lenkrad-server
+            HostName    [public-aws-ip]
+            User    ubuntu
+            IdentityFile ~/.ssh/keys/pem-key.pem
+        </code></pre>
+        <p>You should now be able to ssh into the instance with the command "ssh my-lenkrad-server".</p>
+        <h3>3. Install apache, php, certbot, and mysql</h3>
+        <p>Once logged into your instance, run the following commands:</p>
+        <h4>Apache & mysql</h4>
+        <pre class="normalize-code"><code class="language-bash">
+            sudo apt update
+            sudo apt install apache2 mysql-server
+            sudo mysql_secure_installation
+        </code></pre>
+        <blockquote>Consider setting up a dedicated user with restricted permissions</blockquote>
+        <h4>PHP & modules</h4>
+        <pre class="normalize-code"><code class="language-bash">
+            sudo apt install software-properties-common
+            sudo add-apt-repository ppa:ondrej/php
+            sudo apt update
+            sudo apt install php8.2 libapache2-mod-php8.2
+            sudo apt install php8.2-{mysql,zip,xml,curl}
+            sudo service apache2 restart
+        </code></pre>
+        <h4>Upload codebase</h4>
+        <p>Upload your codebase to a folder in /var/www.</p>
+        <h4>Domain setup</h4>
+        <pre class="normalize-code"><code class="language-bash">
+            cd /etc/apache2/sites-available
+            sudo cp 000-default.conf my-domain.com.conf
+            sudo nano my-domain.com.conf
+        </code></pre>
+        <p>Assuming you have a domain pointing to the public IP of your server, you can make the following changes:</p>
+        <pre class="normalize-code"><code class="language-bash" data-id="site" data-class="strip-html">
+        </code></pre>
+        <p>Save the file, then</p>
+        <pre class="normalize-code"><code class="language-bash">
+            sudo a2ensite my-domain.com
+            sudo service apache2 restart
+        </code></pre>
+        <h4>SSL for free, baby</h4>
+        <pre class="normalize-code"><code class="language-bash">
+            sudo snap install --classic certbot
+            sudo ln -s /snap/bin/certbot /usr/bin/certbot
+            sudo certbot --apache
+        </code></pre>
+        <h4>Setup .env & migrate</h4>
+        <pre class="normalize-code"><code class="language-bash">
+            cd /var/www/YOUR_UPLOAD_FOLDER
+            nano .env
+        </code></pre>
+        <p>Add needed environment variables and save. You will likely need at least:</p>
+        <ul>
+            <li>DB_NAME</li>
+            <li>DB_USER</li>
+            <li>DB_PASSWORD</li>
+            <li>JWT_SECRET</li>
+            <li>APPLICATION_ID</li>
+        </ul>
+        <p>, but the actual requirements depend on your application.</p>
+        <p>Lastly, migrate your database</p>
+        <pre class="normalize-code"><code class="language-bash">
+            php cli migrate:models mysql
+        </code></pre>
+        <blockquote>Running in a subdirectory of a domain on apache? then don't forget to change the .htaccess file in /public</blockquote>
+    </div>
+    <script type="text/html" id="site">
+    &lt;VirtualHost *:80&gt;
+    # The ServerName directive sets the request scheme, hostname and port that
+    # the server uses to identify itself. This is used when creating
+    # redirection URLs. In the context of virtual hosts, the ServerName
+    # specifies what hostname must appear in the request's Host: header to
+    # match this virtual host. For the default virtual host (this file) this
+    # value is not decisive as it is used as a last resort host regardless.
+    # However, you must set it for any further virtual host explicitly.
+    #ServerName www.example.com
+    ServerName my-domain.com
+    ServerAlias www.my-domain.com
+
+    ServerAdmin YOUR_EMAIL@my-domain.com
+    DocumentRoot /var/www/YOUR_UPLOAD_FOLDER/public
+
+    # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+    # error, crit, alert, emerg.
+    # It is also possible to configure the loglevel for particular
+    # modules, e.g.
+    #LogLevel info ssl:warn
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    # For most configuration files from conf-available/, which are
+    # enabled or disabled at a global level, it is possible to
+    # include a line for only one particular virtual host. For example the
+    # following line enables the CGI configuration for this host only
+    # after it has been globally disabled with "a2disconf".
+    #Include conf-available/serve-cgi-bin.conf
+    &lt;/VirtualHost&gt;
+    </script>
 </section>
